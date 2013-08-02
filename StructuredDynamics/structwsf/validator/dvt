@@ -1,0 +1,73 @@
+#!/usr/bin/php -q
+
+<?php
+
+  // Set the working directory of this script to its home directory. That way, if it is ran from elsewhere,
+  // the relative paths will follow.
+  chdir(dirname(realpath($argv[0])));
+  
+  include_once('inc/clt.php');
+
+  if(PHP_SAPI != 'cli')
+  {
+    die('This is a shell application, so make sure to run this application in your terminal.');
+  }   
+  
+  // Load configurations
+  $config = parse_ini_file("config.ini", TRUE);
+  
+  // Get commandline options
+  $arguments = getopt('h::v::', array('help::'));  
+  
+  // Displaying DSF's help screen if required
+  if(isset($arguments['h']) || isset($arguments['help']))
+  {
+    cecho("Usage: dvt [OPTIONS]\n\n\n", 'WHITE');
+    cecho("Usage examples: \n", 'WHITE');
+    cecho("    Validate data: dvt -v\n", 'WHITE');
+    cecho("Options:\n", 'WHITE');
+    cecho("-v                                    Run all the data validation tests\n", 'WHITE');
+    cecho("-h, --help                            Show this help section\n\n", 'WHITE');
+    exit;
+  }     
+  
+  include_once(rtrim($config['structWSF-PHP-API']['folder'], '/')."/StructuredDynamics/SplClassLoader.php");  
+  
+  // Load the \ws namespace where all the web service code is 
+  $loader_ws = new SplClassLoader('StructuredDynamics\structwsf\php\api\ws', rtrim($config['structWSF-PHP-API']['folder'], '/'));
+  $loader_ws->register();
+
+  // Load the \framework namespace where all the supporting (utility) code is
+  $loader_framework = new SplClassLoader('StructuredDynamics\structwsf\php\api\framework', rtrim($config['structWSF-PHP-API']['folder'], '/'));
+  $loader_framework->register();
+
+  // Load the \framework namespace where all the supporting (utility) code is
+  $loader_core_framework = new SplClassLoader('StructuredDynamics\structwsf\framework', rtrim($config['structWSF-PHP-API']['folder'], '/'));
+  $loader_core_framework->register();  
+
+  // Load the \framework namespace where all the supporting (utility) code is
+  $loader_core_framework = new SplClassLoader('StructuredDynamics\structwsf\validator\checks', rtrim($config['structWSF-PHP-API']['folder'], '/'));
+  $loader_core_framework->register();  
+
+  if(isset($arguments['v']))
+  {  
+    cecho("All data of the following dataset and ontologies URIs will be validated on this server:\n\n", 'MAGENTA');
+    
+    foreach($config['data']['datasets'] as $dataset)  
+    {
+      cecho('  -> '.$dataset."\n", 'MAGENTA');
+    }
+    
+    foreach($config['data']['ontologies'] as $ontology)  
+    {
+      cecho('  -> '.$ontology."\n", 'MAGENTA');
+    }  
+    
+    // Run all configured tests
+    foreach($config['tests']['checks'] as $checkTest)  
+    {
+      $test = new $checkTest($config);
+    }
+  }
+  
+?>
