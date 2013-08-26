@@ -4,29 +4,30 @@
 
   use \StructuredDynamics\structwsf\php\api\ws\sparql\SparqlQuery;
   
-  class CheckURIExistance
+  class CheckURIExistance extends Check
   {
-    function __construct($config)
-    { 
-      $this->run($config);      
+    function __construct()
+    {
+      $this->name = 'URI Usage Existence Check';
+      $this->description = 'Make sure that all the referenced URIs exists in one of the input dataset or ontology';
     }
     
-    private function run($config)
+    public function run()
     {
       cecho("\n\n");
       
-      cecho("Data validation test: make sure that all the referenced URIs exists in one of the input dataset or ontology...\n\n", 'LIGHT_BLUE');
+      cecho("Data validation test: ".$this->description."...\n\n", 'LIGHT_BLUE');
 
-      $sparql = new SparqlQuery($config['structwsf']['network']);
+      $sparql = new SparqlQuery($this->network);
 
       $from = '';
       
-      foreach($config['data']['datasets'] as $dataset)
+      foreach($this->checkOnDatasets as $dataset)
       {
         $from .= 'from <'.$dataset.'> ';
       }
       
-      foreach($config['data']['ontologies'] as $ontology)
+      foreach($this->checkUsingOntologies as $ontology)
       {
         $from .= 'from <'.$ontology.'> ';
       }
@@ -54,6 +55,11 @@
             $uri = $result['o']['value'];
             
             cecho('  -> '.$uri."\n", 'LIGHT_RED');
+            
+            $this->errors[] = array(
+              'id' => 'URI-EXISTANCE-100',
+              'uri' => $uri
+            );
           }
 
           cecho("\n\n  Note: All the URIs listed above have been used in one of the dataset but are not defined in any of the input datasets or ontologies. These issues need to be investigated, and fixes in the dataset or ontologies may be required.\n\n\n", 'LIGHT_RED');
@@ -64,5 +70,136 @@
         }
       }      
     }
+    
+    public function outputXML()
+    {
+      /*
+        <check>
+          
+          <name></name>
+          <description></description>
+          <onDatasets></onDatasets>
+          <usingOntologies></usingOntologies>
+          
+          <validationErrors>
+            <error>
+              <id></id>
+              <unexistingURI></unexistingURI>
+            </error>
+          <validationErrors>
+          
+        </check>      
+      */
+      
+      if(count($this->errors) <= 0)
+      {
+        return('');
+      }
+      
+      $xml = "  <check>\n";
+      
+      $xml .= "    <name>".$this->name."</name>\n";      
+      $xml .= "    <description>".$this->description."</description>\n";      
+      $xml .= "    <onDatasets>\n";
+      
+      foreach($this->checkOnDatasets as $dataset)
+      {
+        $xml .= "      <dataset>".$dataset."</dataset>\n";
+      }
+      
+      $xml .= "    </onDatasets>\n";
+
+      $xml .= "    <usingOntologies>\n";
+      
+      foreach($this->checkUsingOntologies as $ontology)
+      {
+        $xml .= "      <ontology>".$ontology."</ontology>\n";
+      }
+      
+      $xml .= "    </usingOntologies>\n";
+      
+      $xml .= "    <validationErrors>\n";
+      
+      foreach($this->errors as $error)
+      {
+        $xml .= "      <error>\n";
+        $xml .= "        <id>".$error['id']."</id>\n";
+        $xml .= "        <unexistingURI>".$error['uri']."</unexistingURI>\n";
+        $xml .= "      </error>\n";
+      }
+      
+      $xml .= "    </validationErrors>\n";
+      
+      $xml .= "  </check>\n";
+      
+      return($xml);
+    }    
+    
+    public function outputJSON()
+    {
+      /*
+        {
+          "name": "",
+          "description": "",
+          "onDatasets": [],
+          "usingOntologies": [],
+          "validationErrors": [
+            {
+              "id": "",
+              "unexistingURI": ""
+            }
+          ]
+        }  
+      */
+      
+      if(count($this->errors) <= 0)
+      {
+        return('');
+      }
+      
+      $json = "  {\n";
+      
+      $json .= "    \"name\": \"".$this->name."\",\n";      
+      $json .= "    \"description\": \"".$this->description."\",\n";      
+      $json .= "    \"onDatasets\": [\n";
+      
+      foreach($this->checkOnDatasets as $dataset)
+      {
+        $json .= "      \"".$dataset."\",\n";
+      }
+      
+      $json = substr($json, 0, strlen($json) - 2)."\n";
+      
+      $json .= "    ],\n";
+
+      $json .= "    \"usingOntologies\": [\n";
+      
+      foreach($this->checkUsingOntologies as $ontology)
+      {
+        $json .= "      \"".$ontology."\",\n";
+      }
+
+      $json = substr($json, 0, strlen($json) - 2)."\n";
+      
+      $json .= "    ],\n";
+      
+      $json .= "    \"validationErrors\": [\n";
+      
+      foreach($this->errors as $error)
+      {
+        $json .= "      {\n";
+        $json .= "        \"id\": \"".$error['id']."\",\n";
+        $json .= "        \"unexistingURI\": \"".$error['uri']."\"\n";
+        $json .= "      },\n";
+      }
+      
+      $json = substr($json, 0, strlen($json) - 2)."\n";
+      
+      $json .= "    ]\n";
+      
+      $json .= "  }\n";
+      
+      return($json);      
+    }    
   }
 ?>

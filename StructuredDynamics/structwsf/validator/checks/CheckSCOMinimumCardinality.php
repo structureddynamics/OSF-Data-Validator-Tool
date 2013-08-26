@@ -4,29 +4,30 @@
 
   use \StructuredDynamics\structwsf\php\api\ws\sparql\SparqlQuery;
   
-  class CheckSCOMinimumCardinality
+  class CheckSCOMinimumCardinality extends Check
   {
-    function __construct($config)
+    function __construct()
     { 
-      $this->run($config);      
+      $this->name = 'SCO Minimum Cardinality Check';
+      $this->description = 'Make sure that all properties\' SCO min cardinality defined in the ontologies is respected in the datasets';
     }
     
-    private function run($config)
+    public function run()
     {
       cecho("\n\n");
       
-      cecho("Data validation test: make sure that all properties' SCO min cardinality defined in the ontologies is respected in the datasets...\n\n", 'LIGHT_BLUE');
+      cecho("Data validation test: ".$this->description."...\n\n", 'LIGHT_BLUE');
 
-      $sparql = new SparqlQuery($config['structwsf']['network']);
+      $sparql = new SparqlQuery($this->network);
 
       $from = '';
       
-      foreach($config['data']['datasets'] as $dataset)
+      foreach($this->checkOnDatasets as $dataset)
       {
         $from .= 'from <'.$dataset.'> ';
       }
       
-      foreach($config['data']['ontologies'] as $ontology)
+      foreach($this->checkUsingOntologies as $ontology)
       {
         $from .= 'from <'.$ontology.'> ';
       }
@@ -63,20 +64,18 @@
           
           cecho("\n\n");
           
-          $errorsFound = FALSE;
-          
           foreach($minCadinalities as $property => $minCardinality)
           {
-            $sparql = new SparqlQuery($config['structwsf']['network']);
+            $sparql = new SparqlQuery($this->network);
 
             $from = '';
             
-            foreach($config['data']['datasets'] as $dataset)
+            foreach($this->checkOnDatasets as $dataset)
             {
               $from .= 'from <'.$dataset.'> ';
             }
             
-            foreach($config['data']['ontologies'] as $ontology)
+            foreach($this->checkUsingOntologies as $ontology)
             {
               $from .= 'from <'.$ontology.'> ';
             }
@@ -106,14 +105,20 @@
                   cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                   cecho('     -> property: '.$property."\n", 'LIGHT_RED');
                   cecho('        -> number of occurences: '.$numberOfOccurences."\n", 'LIGHT_RED');
+                  
+                  $this->errors[] = array(
+                    'id' => 'SCO-MIN-CARDINALITY-100',
+                    'invalidRecordURI' => $subject,
+                    'invalidPropertyURI' => $property,
+                    'numberOfOccurences' => $numberOfOccurences,
+                    'minExpectedNumberOfOccurences' => $minCadinalities[$property]
+                  );                  
                 }
-                
-                $errorsFound = TRUE;
               }
             }
           }
           
-          if($errorsFound)
+          if(count($this->errors) > 0)
           {
             cecho("\n\n  Note: All the errors returned above list records that are being described using not enough of a certain type of property. The ontologies does specify that a minimum cardinality should be used for these properties, and what got indexed in the system goes against this instruction of the ontology.\n\n\n", 'LIGHT_RED');
           }
@@ -128,5 +133,148 @@
         }
       }
     }
+    
+    public function outputXML()
+    {
+      /*
+        <check>
+          
+          <name></name>
+          <description></description>
+          <onDatasets></onDatasets>
+          <usingOntologies></usingOntologies>
+          
+          <validationErrors>
+            <error>
+              <id></id>
+              <invalidRecordURI></invalidRecordURI>
+              <invalidPropertyURI></invalidPropertyURI>
+              <numberOfOccurences></numberOfOccurences>
+              <minExpectedNumberOfOccurences></minExpectedNumberOfOccurences>
+            </error>
+          <validationErrors>
+          
+        </check>      
+      */
+      
+      if(count($this->errors) <= 0)
+      {
+        return('');
+      }
+      
+      $xml = "  <check>\n";
+      
+      $xml .= "    <name>".$this->name."</name>\n";      
+      $xml .= "    <description>".$this->description."</description>\n";      
+      $xml .= "    <onDatasets>\n";
+      
+      foreach($this->checkOnDatasets as $dataset)
+      {
+        $xml .= "      <dataset>".$dataset."</dataset>\n";
+      }
+      
+      $xml .= "    </onDatasets>\n";
+
+      $xml .= "    <usingOntologies>\n";
+      
+      foreach($this->checkUsingOntologies as $ontology)
+      {
+        $xml .= "      <ontology>".$ontology."</ontology>\n";
+      }
+      
+      $xml .= "    </usingOntologies>\n";
+      
+      $xml .= "    <validationErrors>\n";
+      
+      foreach($this->errors as $error)
+      {
+        $xml .= "      <error>\n";
+        $xml .= "        <id>".$error['id']."</id>\n";
+        $xml .= "        <invalidRecordURI>".$error['invalidRecordURI']."</invalidRecordURI>\n";
+        $xml .= "        <invalidPropertyURI>".$error['invalidPropertyURI']."</invalidPropertyURI>\n";
+        $xml .= "        <numberOfOccurences>".$error['numberOfOccurences']."</numberOfOccurences>\n";
+        $xml .= "        <minExpectedNumberOfOccurences>".$error['minExpectedNumberOfOccurences']."</minExpectedNumberOfOccurences>\n";
+        $xml .= "      </error>\n";
+      }
+      
+      $xml .= "    </validationErrors>\n";
+      
+      $xml .= "  </check>\n";
+      
+      return($xml);
+    }    
+    
+    public function outputJSON()
+    {
+      /*
+        {
+          "name": "",
+          "description": "",
+          "onDatasets": [],
+          "usingOntologies": [],
+          "validationErrors": [
+            {
+              "id": "",
+              "invalidRecordURI": ""
+              "invalidPropertyURI": ""
+              "numberOfOccurences": ""
+              "minExpectedNumberOfOccurences": ""
+            }
+          ]
+        }  
+      */
+
+      if(count($this->errors) <= 0)
+      {
+        return('');
+      }
+      
+      $json = "  {\n";
+      
+      $json .= "    \"name\": \"".$this->name."\",\n";      
+      $json .= "    \"description\": \"".$this->description."\",\n";      
+      $json .= "    \"onDatasets\": [\n";
+      
+      foreach($this->checkOnDatasets as $dataset)
+      {
+        $json .= "      \"".$dataset."\",\n";
+      }
+      
+      $json = substr($json, 0, strlen($json) - 2)."\n";
+      
+      $json .= "    ],\n";
+
+      $json .= "    \"usingOntologies\": [\n";
+      
+      foreach($this->checkUsingOntologies as $ontology)
+      {
+        $json .= "      \"".$ontology."\",\n";
+      }
+
+      $json = substr($json, 0, strlen($json) - 2)."\n";
+      
+      $json .= "    ],\n";
+      
+      $json .= "    \"validationErrors\": [\n";
+      
+      foreach($this->errors as $error)
+      {
+        $json .= "      {\n";
+        $json .= "        \"id\": \"".$error['id']."\",\n";
+        $json .= "        \"invalidRecordURI\": \"".$error['invalidRecordURI']."\",\n";
+        $json .= "        \"invalidPropertyURI\": \"".$error['invalidPropertyURI']."\",\n";
+        $json .= "        \"numberOfOccurences\": \"".$error['numberOfOccurences']."\",\n";
+        $json .= "        \"minExpectedNumberOfOccurences\": \"".$error['minExpectedNumberOfOccurences']."\"\n";
+        $json .= "      },\n";
+      }
+      
+      $json = substr($json, 0, strlen($json) - 2)."\n";
+      
+      $json .= "    ]\n";
+      
+      $json .= "  }\n";
+      
+      return($json);      
+    }    
   }
 ?>

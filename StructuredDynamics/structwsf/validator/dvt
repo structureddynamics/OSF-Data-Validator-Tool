@@ -17,7 +17,9 @@
   $config = parse_ini_file("config.ini", TRUE);
   
   // Get commandline options
-  $arguments = getopt('h::v::', array('help::'));  
+  $arguments = getopt('h::v::s::', array('help::', 
+                                         'output-xml::',
+                                         'output-json::'));  
   
   // Displaying DSF's help screen if required
   if(isset($arguments['h']) || isset($arguments['help']))
@@ -26,7 +28,12 @@
     cecho("Usage examples: \n", 'WHITE');
     cecho("    Validate data: dvt -v\n", 'WHITE');
     cecho("Options:\n", 'WHITE');
+    cecho("--output-xml=\"[PATH]\"                 Output the validation reports in a file specified\n", 'WHITE');
+    cecho("                                      by the path in XML format.\n", 'WHITE');
+    cecho("--output-json=\"[PATH]\"                Output the validation reports in a file specified\n", 'WHITE');
+    cecho("                                      by the path in JSON format.\n", 'WHITE');
     cecho("-v                                    Run all the data validation tests\n", 'WHITE');
+    cecho("-s                                    Silent. Do not output anything to the shell.\n", 'WHITE');
     cecho("-h, --help                            Show this help section\n\n", 'WHITE');
     exit;
   }     
@@ -48,6 +55,41 @@
   // Load the \framework namespace where all the supporting (utility) code is
   $loader_core_framework = new SplClassLoader('StructuredDynamics\structwsf\validator\checks', rtrim($config['structWSF-PHP-API']['folder'], '/'));
   $loader_core_framework->register();  
+  
+  global $silent;
+  $outputXMLPath = '';
+  $outputJSONPath = '';
+  
+  if(isset($arguments['s']))
+  {
+    $silent = TRUE;
+  }
+  else
+  {
+    $silent = FALSE;
+  }
+  
+  if(isset($arguments['output-xml']))
+  {
+    $outputXMLPath = $arguments['output-xml'];
+
+    if(@file_put_contents($outputXMLPath, "<?xml version=\"1.0\"?>\n") === FALSE)
+    {
+      cecho("Couldn't write file specified in the --output-xml parameter\n\n", 'RED');
+      die(1);
+    }
+  }  
+  
+  if(isset($arguments['output-json']))
+  {
+    $outputJSONPath = $arguments['output-json'];
+
+    if(@file_put_contents($outputJSONPath, "") === FALSE)
+    {
+      cecho("Couldn't write file specified in the --output-json parameter\n\n", 'RED');
+      die(1);
+    }
+  }  
 
   if(isset($arguments['v']))
   {  
@@ -63,11 +105,58 @@
       cecho('  -> '.$ontology."\n", 'MAGENTA');
     }  
     
+    if(!empty($outputXMLPath))
+    {
+      file_put_contents($outputXMLPath, "<checks>\n", FILE_APPEND);
+    }
+    
+    if(!empty($outputJSONPath))
+    {
+      file_put_contents($outputJSONPath, "{\n  \"checks\": [\n", FILE_APPEND);
+      $nbCheckFailing = 0;
+    }
+      
     // Run all configured tests
+    
     foreach($config['tests']['checks'] as $checkTest)  
     {
-      $test = new $checkTest($config);
+      $check = new $checkTest();
+      
+      $check->setNetwork($config['structwsf']['network']);
+      $check->setCheckUsingOntologies($config['data']['ontologies']);
+      $check->setCheckOnDatasets($config['data']['datasets']);
+      
+      $check->run();   
+      
+      if(!empty($outputXMLPath))
+      {
+        file_put_contents($outputXMLPath, $check->outputXML(), FILE_APPEND);
+      }
+      
+      if(!empty($outputJSONPath))
+      {
+        $outputJSON = $check->outputJSON();
+        
+        if($nbCheckFailing > 0 && !empty($outputJSON))
+        {
+          file_put_contents($outputJSONPath, ",\n", FILE_APPEND);
+        }
+        
+        file_put_contents($outputJSONPath, rtrim($outputJSON, "\n"), FILE_APPEND);
+        
+        $nbCheckFailing++;
+      }
     }
+    
+    if(!empty($outputXMLPath))
+    {
+      file_put_contents($outputXMLPath, "</checks>\n", FILE_APPEND);
+    }
+    
+    if(!empty($outputJSONPath))
+    {
+      file_put_contents($outputJSONPath, "  ]\n}\n", FILE_APPEND);
+    }    
   }
   
 ?>

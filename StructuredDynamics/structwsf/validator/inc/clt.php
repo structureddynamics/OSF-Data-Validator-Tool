@@ -1,6 +1,13 @@
 <?php
   function cecho($text, $color="NORMAL", $return = FALSE)
   {
+    global $silent;
+    
+    if($silent)
+    {
+      return;
+    }
+    
     $_colors = array(
       'LIGHT_RED'    => "[1;31m",
       'LIGHT_GREEN'  => "[1;32m",
