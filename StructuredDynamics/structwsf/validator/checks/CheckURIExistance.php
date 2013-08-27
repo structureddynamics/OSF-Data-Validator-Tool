@@ -58,6 +58,7 @@
             
             $this->errors[] = array(
               'id' => 'URI-EXISTANCE-100',
+              'type' => 'error',
               'uri' => $uri
             );
           }
@@ -122,10 +123,13 @@
       
       foreach($this->errors as $error)
       {
-        $xml .= "      <error>\n";
-        $xml .= "        <id>".$error['id']."</id>\n";
-        $xml .= "        <unexistingURI>".$error['uri']."</unexistingURI>\n";
-        $xml .= "      </error>\n";
+        if($error['type'] == 'error')
+        {
+          $xml .= "      <error>\n";
+          $xml .= "        <id>".$error['id']."</id>\n";
+          $xml .= "        <unexistingURI>".$error['uri']."</unexistingURI>\n";
+          $xml .= "      </error>\n";
+        }
       }
       
       $xml .= "    </validationErrors>\n";
@@ -185,15 +189,24 @@
       
       $json .= "    \"validationErrors\": [\n";
       
+      $foundErrors = FALSE;
       foreach($this->errors as $error)
       {
-        $json .= "      {\n";
-        $json .= "        \"id\": \"".$error['id']."\",\n";
-        $json .= "        \"unexistingURI\": \"".$error['uri']."\"\n";
-        $json .= "      },\n";
+        if($error['type'] == 'error')
+        {
+          $json .= "      {\n";
+          $json .= "        \"id\": \"".$error['id']."\",\n";
+          $json .= "        \"unexistingURI\": \"".$error['uri']."\"\n";
+          $json .= "      },\n";
+          
+          $foundErrors = TRUE;
+        }
       }
       
-      $json = substr($json, 0, strlen($json) - 2)."\n";
+      if($foundErrors)
+      {
+        $json = substr($json, 0, strlen($json) - 2)."\n";
+      }
       
       $json .= "    ]\n";
       

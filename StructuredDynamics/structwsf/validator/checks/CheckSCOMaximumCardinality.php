@@ -108,6 +108,7 @@
                   
                   $this->errors[] = array(
                     'id' => 'SCO-MAX-CARDINALITY-100',
+                    'type' => 'error',
                     'invalidRecordURI' => $subject,
                     'invalidPropertyURI' => $property,
                     'numberOfOccurences' => $numberOfOccurences,
@@ -188,13 +189,16 @@
       
       foreach($this->errors as $error)
       {
-        $xml .= "      <error>\n";
-        $xml .= "        <id>".$error['id']."</id>\n";
-        $xml .= "        <invalidRecordURI>".$error['invalidRecordURI']."</invalidRecordURI>\n";
-        $xml .= "        <invalidPropertyURI>".$error['invalidPropertyURI']."</invalidPropertyURI>\n";
-        $xml .= "        <numberOfOccurences>".$error['numberOfOccurences']."</numberOfOccurences>\n";
-        $xml .= "        <maxExpectedNumberOfOccurences>".$error['maxExpectedNumberOfOccurences']."</maxExpectedNumberOfOccurences>\n";
-        $xml .= "      </error>\n";
+        if($error['type'] == 'error')
+        {
+          $xml .= "      <error>\n";
+          $xml .= "        <id>".$error['id']."</id>\n";
+          $xml .= "        <invalidRecordURI>".$error['invalidRecordURI']."</invalidRecordURI>\n";
+          $xml .= "        <invalidPropertyURI>".$error['invalidPropertyURI']."</invalidPropertyURI>\n";
+          $xml .= "        <numberOfOccurences>".$error['numberOfOccurences']."</numberOfOccurences>\n";
+          $xml .= "        <maxExpectedNumberOfOccurences>".$error['maxExpectedNumberOfOccurences']."</maxExpectedNumberOfOccurences>\n";
+          $xml .= "      </error>\n";
+        }
       }
       
       $xml .= "    </validationErrors>\n";
@@ -257,18 +261,27 @@
       
       $json .= "    \"validationErrors\": [\n";
       
+      $foundErrors = FALSE;
       foreach($this->errors as $error)
       {
-        $json .= "      {\n";
-        $json .= "        \"id\": \"".$error['id']."\",\n";
-        $json .= "        \"invalidRecordURI\": \"".$error['invalidRecordURI']."\",\n";
-        $json .= "        \"invalidPropertyURI\": \"".$error['invalidPropertyURI']."\",\n";
-        $json .= "        \"numberOfOccurences\": \"".$error['numberOfOccurences']."\",\n";
-        $json .= "        \"maxExpectedNumberOfOccurences\": \"".$error['maxExpectedNumberOfOccurences']."\"\n";
-        $json .= "      },\n";
+        if($error['type'] == 'error')
+        {
+          $json .= "      {\n";
+          $json .= "        \"id\": \"".$error['id']."\",\n";
+          $json .= "        \"invalidRecordURI\": \"".$error['invalidRecordURI']."\",\n";
+          $json .= "        \"invalidPropertyURI\": \"".$error['invalidPropertyURI']."\",\n";
+          $json .= "        \"numberOfOccurences\": \"".$error['numberOfOccurences']."\",\n";
+          $json .= "        \"maxExpectedNumberOfOccurences\": \"".$error['maxExpectedNumberOfOccurences']."\"\n";
+          $json .= "      },\n";
+          
+          $foundErrors = TRUE;
+        }
       }
       
-      $json = substr($json, 0, strlen($json) - 2)."\n";
+      if($foundErrors)
+      {
+        $json = substr($json, 0, strlen($json) - 2)."\n";
+      }
       
       $json .= "    ]\n";
       
