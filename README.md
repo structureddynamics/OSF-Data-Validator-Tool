@@ -55,6 +55,11 @@ Usage: dvt [OPTIONS]
 Usage examples:
     Validate data: dvt -v
 Options:
+--output-xml="[PATH]"                 Output the validation reports in a file specified
+                                      by the path in XML format.
+--output-json="[PATH]"                Output the validation reports in a file specified
+                                      by the path in JSON format.
 -v                                    Run all the data validation tests
+-s                                    Silent. Do not output anything to the shell.
 -h, --help                            Show this help section
 ```
