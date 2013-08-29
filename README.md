@@ -59,6 +59,8 @@ Options:
                                       by the path in XML format.
 --output-json="[PATH]"                Output the validation reports in a file specified
                                       by the path in JSON format.
+--allocated-memory="M"                Specifies the number of Mb of memory allocated to the DVT
+                                      The number of Mb should be specified in this parameter
 -v                                    Run all the data validation tests
 -s                                    Silent. Do not output anything to the shell.
 -h, --help                            Show this help section

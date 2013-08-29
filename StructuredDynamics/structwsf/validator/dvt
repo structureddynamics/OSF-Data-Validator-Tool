@@ -19,7 +19,8 @@
   // Get commandline options
   $arguments = getopt('h::v::s::', array('help::', 
                                          'output-xml::',
-                                         'output-json::'));  
+                                         'output-json::',
+                                         'allocated-memory::'));  
   
   // Displaying DSF's help screen if required
   if(isset($arguments['h']) || isset($arguments['help']))
@@ -32,6 +33,8 @@
     cecho("                                      by the path in XML format.\n", 'WHITE');
     cecho("--output-json=\"[PATH]\"                Output the validation reports in a file specified\n", 'WHITE');
     cecho("                                      by the path in JSON format.\n", 'WHITE');
+    cecho("--allocated-memory=\"M\"                Specifies the number of Mb of memory allocated to the DVT\n", 'WHITE');
+    cecho("                                      The number of Mb should be specified in this parameter\n", 'WHITE');
     cecho("-v                                    Run all the data validation tests\n", 'WHITE');
     cecho("-s                                    Silent. Do not output anything to the shell.\n", 'WHITE');
     cecho("-h, --help                            Show this help section\n\n", 'WHITE');
@@ -68,6 +71,11 @@
   {
     $silent = FALSE;
   }
+  
+  if(isset($arguments['allocated-memory']))
+  {
+    ini_set('memory_limit', $arguments['allocated-memory'].'M');
+  }  
   
   if(isset($arguments['output-xml']))
   {
