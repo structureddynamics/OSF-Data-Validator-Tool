@@ -274,47 +274,7 @@
                 }
               }
             }
-            /*
-
-              $results = json_decode($sparql->getResultset(), TRUE);    
-              
-              if(isset($results['results']['bindings']) && count($results['results']['bindings']) > 0)
-              {
-                foreach($results['results']['bindings'] as $result)
-                {
-                  $subject = $result['s']['value'];
-                  $numberOfOccurences = $result['numberOfOccurences']['value'];
-                  
-                  cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
-                  cecho('     -> property: '.$property."\n", 'LIGHT_RED');
-                  cecho('        -> number of occurences: '.$numberOfOccurences."\n", 'LIGHT_RED');
-                  
-                  $this->errors[] = array(
-                    'id' => 'SCO-MAX-CARDINALITY-100',
-                    'invalidRecordURI' => $subject,
-                    'invalidPropertyURI' => $property,
-                    'numberOfOccurences' => $numberOfOccurences,
-                    'maxExpectedNumberOfOccurences' => $maxCadinalities[$property]
-                  );                  
-                }
-              }
-            }
-            */
           }
-          
-          /*
-          if(count($this->errors) > 0)
-          {
-            cecho("\n\n  Note: All the errors returned above list records that are being described using too many of a certain type of property. The ontologies does specify that a maximum cardinality should be used for these properties, and what got indexed in the system goes against this instruction of the ontology.\n\n\n", 'LIGHT_RED');
-          }
-          else
-          {
-            cecho("\n\n  All properties respects the maximum cardinality specified in the ontologies...\n\n\n", 'LIGHT_GREEN');
-          }*/           
-        }
-        else
-        {
-          //cecho("No properties have any maximum cardinality defined in any ontologies. Move on to the next check...\n\n\n", 'LIGHT_GREEN');
         }
       }
     }
