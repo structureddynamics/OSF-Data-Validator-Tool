@@ -18,7 +18,7 @@
     }
     
     public function run()
-    {
+    { 
       cecho("\n\n");
       
       cecho("Data validation test: ".$this->description."...\n\n", 'LIGHT_BLUE');
@@ -137,7 +137,7 @@
                               where
                               {
                                 graph ?g {
-                                  ?s <http://purl.org/dc/terms/subject> ?value.
+                                  ?s <'.$objectProperty.'> ?value.
                                   filter(isIRI(?value))
                                 }
 
@@ -195,6 +195,8 @@
                   {
                     // If they are not, then we check in the ontology to see if the range is not
                     // one of the super class of one of the type(s)
+                    $superClasses = array();
+                    
                     foreach($types as $type)
                     {
                       $ontologyURI = $this->getTypeOntology($type);
@@ -217,63 +219,77 @@
                         
                         if($ontologyRead->isSuccessful())
                         {
-                          $superClasses = $ontologyRead->getResultset()->getResultset();
+                          $scs = $ontologyRead->getResultset()->getResultset();
                           
                           // If empty, then there is no super-classes
-                          if(!empty($superClasses))
+                          if(!empty($scs))
                           {                                                     
-                            $rangeMatch = FALSE;
+                            $scs = $scs[key($scs)];
                            
-                            $superClasses = $superClasses[key($superClasses)];
-                           
-                            foreach($superClasses as $superClass => $description)
+                            foreach($scs as $superClass => $description)
                             {
-                              if($superClass == $range)
+                              if(!in_array($superClass, $superClasses))
                               {
-                                $rangeMatch = TRUE;
-                                break;
+                                $superClasses[] = $superClass;
                               }
                             }
-                            
-                            if(!$rangeMatch)
-                            {
-                              // Log an error
-                              // Couldn't match one of the super classe with the specified range
-                              DebugBreak();
-                              cecho('  -> Object property "'.$objectProperty.'" doesn\'t match range "'.$range.'"'."\n", 'LIGHT_RED');
-                              
-                              $this->errors[] = array(
-                                'id' => 'OBJECT-PROPERTIES-RANGE-100',
-                                'type' => 'error',
-                                'objectProperty' => $objectProperty,
-                                'definedRange' => $range,
-                                'valueTypes' => implode(', ', $types),
-                                'valueSuperTypes' => implode(', ', array_keys($superClasses))
-                              );                                 
-                            }
-                          }
-                          else
-                          {
-                            // Log an error
-                            // There is no super-class, so we couldn't confirm that the type is in the range of this property
                           }
                         }
                         else
                         {
                           // Log a warning
                           // Can't get the super classes of the target type
+                          $this->errors[] = array(
+                            'id' => 'OBJECT-PROPERTIES-RANGE-51',
+                            'type' => 'warning',
+                            'objectProperty' => $objectProperty,
+                          );                              
                         }
                       }
                       else
                       {
                         // Log a warning
                         // Can't find ontology where the type $type is defined
+                        $this->errors[] = array(
+                          'id' => 'OBJECT-PROPERTIES-RANGE-52',
+                          'type' => 'warning',
+                          'objectProperty' => $objectProperty,
+                        );                              
                       }
+                    }
+                    
+                    $rangeMatch = FALSE;
+      
+                    foreach($superClasses as $superClass)
+                    {
+                      if($superClass == $range)
+                      {
+                        $rangeMatch = TRUE;
+                        break;
+                      }
+                    }                            
+                    
+                    if(!$rangeMatch)
+                    {
+                      // Log an error
+                      // Couldn't match one of the super classe with the specified range
+                      cecho('  -> Object property "'.$objectProperty.'" doesn\'t match range "'.$range.'" for value "'.$value.'"'."\n", 'LIGHT_RED');
+                      
+                      $this->errors[] = array(
+                        'id' => 'OBJECT-PROPERTIES-RANGE-100',
+                        'type' => 'error',
+                        'objectProperty' => $objectProperty,
+                        'definedRange' => $range,
+                        'value' => $value,
+                        'valueTypes' => $types,
+                        'valueSuperTypes' => $superClasses,
+                        'affectedRecords' => $this->getAffectedRecords($objectProperty, $value)
+                      );        
                     }
                   }
                 }
               }
-            }
+            }           
           }
         }
       }
@@ -332,6 +348,30 @@
           $xml .= "      <error>\n";
           $xml .= "        <id>".$error['id']."</id>\n";
           $xml .= "        <objectProperty>".$error['objectProperty']."</objectProperty>\n";
+          $xml .= "        <definedRange>".$error['definedRange']."</definedRange>\n";
+          $xml .= "        <value>".$error['value']."</value>\n";
+          
+          if(!empty($error['valueTypes']))
+          {
+            $xml .= "        <valueTypes>\n";
+            $xml .= "          <valueType>".implode("</valueType>\n          <valueType>", $error['valueTypes'])."</valueType>\n";            
+            $xml .= "        </valueTypes>\n";
+          }
+          
+          if(!empty($error['valueSuperTypes']))
+          {
+            $xml .= "        <valueSuperTypes>\n";
+            $xml .= "          <valueSuperType>".implode("</valueSuperType>\n          <valueSuperType>", $error['valueSuperTypes'])."</valueSuperType>\n";            
+            $xml .= "        </valueSuperTypes>\n";
+          }
+          
+          if(!empty($error['affectedRecords']))
+          {
+            $xml .= "        <affectedRecords>\n";
+            $xml .= "          <affectedRecord>".implode("</affectedRecord>\n          <affectedRecord>", $error['affectedRecords'])."</affectedRecord>\n";            
+            $xml .= "        </affectedRecords>\n";
+          }
+          
           $xml .= "      </error>\n";
         }
       }
@@ -385,7 +425,7 @@
         {
           $json .= "      {\n";
           $json .= "        \"id\": \"".$error['id']."\",\n";
-          $json .= "        \"objectProperty\": \"".$error['objectProperty']."\"\n";
+          $json .= "        \"objectProperty\": \"".$error['objectProperty']."\"\n";  
           $json .= "      },\n";
           
           $foundWarnings = TRUE;
@@ -406,6 +446,32 @@
           $json .= "      {\n";
           $json .= "        \"id\": \"".$error['id']."\",\n";
           $json .= "        \"objectProperty\": \"".$error['objectProperty']."\"\n";
+          $json .= "        \"definedRange\": \"".$error['definedRange']."\",\n";
+          $json .= "        \"value\": \"".$error['value']."\",\n";
+          
+          if(!empty($error['valueTypes']))
+          {
+            $json .= "        \"valueTypes\": [\n";
+            $json .= "          \"".implode("\", \n          \"", $error['valueTypes'])."\"\n";
+            $json .= "        ],\n";
+          }
+          
+          if(!empty($error['valueSuperTypes']))
+          {
+            $json .= "        \"valueSuperTypes\": [\n";
+            $json .= "          \"".implode("\", \n          \"", $error['valueSuperTypes'])."\"\n";
+            $json .= "        ],\n";
+          }
+                              
+          if(!empty($error['affectedRecords']))
+          {
+            $json .= "        \"affectedRecords\": [\n";
+            $json .= "          \"".implode("\", \n          \"", $error['affectedRecords'])."\"\n";
+            $json .= "        ],\n";
+          }
+          
+          $json = substr($json, 0, strlen($json) - 2)."\n";
+          
           $json .= "      },\n";
           
           $foundErrors = TRUE;
@@ -449,6 +515,46 @@
           return(FALSE);
         }
       }
+    }
+    
+    private function getAffectedRecords($objectProperty, $value)
+    {
+      $affectedRecords = array();
+                              
+      $sparqlAffectedRecords = new SparqlQuery($this->network);
+
+      $from = '';
+      
+      foreach($this->checkOnDatasets as $dataset)
+      {
+        $from .= 'from <'.$dataset.'> ';
+      }
+      
+      $sparqlAffectedRecords->mime("application/sparql-results+json")
+             ->query('select distinct ?s
+                      '.$from.'
+                      where
+                      {
+                        ?s <'.$objectProperty.'> <'.$value.'>.
+                      }')
+             ->send();
+
+      if($sparqlAffectedRecords->isSuccessful())
+      { 
+        $results = json_decode($sparqlAffectedRecords->getResultset(), TRUE);    
+        
+        if(isset($results['results']['bindings']) && count($results['results']['bindings']) > 0)
+        {
+          foreach($results['results']['bindings'] as $result)
+          {
+            $s = $result['s']['value'];
+            
+            $affectedRecords[] = $s;
+          }
+        }                                
+      }      
+      
+      return($affectedRecords);
     }
   }
 ?>
