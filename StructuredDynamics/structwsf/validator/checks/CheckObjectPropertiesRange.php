@@ -445,7 +445,7 @@
         {
           $json .= "      {\n";
           $json .= "        \"id\": \"".$error['id']."\",\n";
-          $json .= "        \"objectProperty\": \"".$error['objectProperty']."\"\n";
+          $json .= "        \"objectProperty\": \"".$error['objectProperty']."\",\n";
           $json .= "        \"definedRange\": \"".$error['definedRange']."\",\n";
           $json .= "        \"value\": \"".$error['value']."\",\n";
           
