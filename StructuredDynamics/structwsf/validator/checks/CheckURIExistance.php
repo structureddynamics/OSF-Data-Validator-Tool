@@ -69,29 +69,20 @@
         {
             cecho("No issues found!\n\n\n", 'LIGHT_GREEN');
         }
-      }      
+      }    
+      else
+      {
+        cecho("We couldn't check if referenced URIs exists in the structWSF instance\n", 'YELLOW');        
+        
+        $this->errors[] = array(
+          'id' => 'URI-EXISTANCE-100',
+          'type' => 'warning',
+        );         
+      }  
     }
-    
+                   
     public function outputXML()
     {
-      /*
-        <check>
-          
-          <name></name>
-          <description></description>
-          <onDatasets></onDatasets>
-          <usingOntologies></usingOntologies>
-          
-          <validationErrors>
-            <error>
-              <id></id>
-              <unexistingURI></unexistingURI>
-            </error>
-          <validationErrors>
-          
-        </check>      
-      */
-      
       if(count($this->errors) <= 0)
       {
         return('');
@@ -119,6 +110,26 @@
       
       $xml .= "    </usingOntologies>\n";
       
+      $xml .= "    <validationWarnings>\n";
+      
+      foreach($this->errors as $error)
+      {
+        if($error['type'] == 'warning')
+        {
+          $xml .= "      <warning>\n";
+          $xml .= "        <id>".$error['id']."</id>\n";
+          
+          if(!empty($error['objectProperty']))
+          {
+            $xml .= "        <objectProperty>".$error['objectProperty']."</objectProperty>\n";
+          }
+          
+          $xml .= "      </warning>\n";
+        }
+      }
+      
+      $xml .= "    </validationWarnings>\n";      
+      
       $xml .= "    <validationErrors>\n";
       
       foreach($this->errors as $error)
@@ -141,21 +152,6 @@
     
     public function outputJSON()
     {
-      /*
-        {
-          "name": "",
-          "description": "",
-          "onDatasets": [],
-          "usingOntologies": [],
-          "validationErrors": [
-            {
-              "id": "",
-              "unexistingURI": ""
-            }
-          ]
-        }  
-      */
-      
       if(count($this->errors) <= 0)
       {
         return('');
@@ -186,6 +182,29 @@
       $json = substr($json, 0, strlen($json) - 2)."\n";
       
       $json .= "    ],\n";
+      
+      
+      $json .= "    \"validationWarnings\": [\n";
+      
+      $foundWarnings = FALSE;
+      foreach($this->errors as $error)
+      {
+        if($error['type'] == 'warning')
+        {
+          $json .= "      {\n";
+          $json .= "        \"id\": \"".$error['id']."\"\n";
+          $json .= "      },\n";
+          
+          $foundWarnings = TRUE;
+        }
+      }
+      
+      if($foundWarnings)
+      {
+        $json = substr($json, 0, strlen($json) - 2)."\n";
+      }   
+      
+      $json .= "    ],\n";      
       
       $json .= "    \"validationErrors\": [\n";
       

@@ -456,9 +456,27 @@
                   }
                 }
               }
+              else
+              {
+                cecho("We couldn't get the list of values for the $datatypePropety property\n", 'YELLOW');
+                
+                $this->errors[] = array(
+                  'id' => 'DATATYPE-PROPERTIES-DATATYPE-52',
+                  'type' => 'warning',
+                );           
+              }
             }
           }
         }
+      }
+      else
+      {
+        cecho("We couldn't get the list of datatype properties from the structWSF instance\n", 'YELLOW');
+        
+        $this->errors[] = array(
+          'id' => 'DATATYPE-PROPERTIES-DATATYPE-51',
+          'type' => 'warning',
+        );           
       }
     }
     
@@ -499,7 +517,12 @@
         {
           $xml .= "      <warning>\n";
           $xml .= "        <id>".$error['id']."</id>\n";
-          $xml .= "        <datatypeProperty>".$error['datatypeProperty']."</datatypeProperty>\n";
+          
+          if(!empty($error['datatypeProperty']))
+          {
+            $xml .= "        <datatypeProperty>".$error['datatypeProperty']."</datatypeProperty>\n";
+          }
+          
           $xml .= "      </warning>\n";
         }
       }
@@ -579,8 +602,8 @@
       $json = substr($json, 0, strlen($json) - 2)."\n";
       
       $json .= "    ],\n";
-      
-      $json .= "    \"validationErrors\": [\n";
+    
+      $json .= "    \"validationWarnings\": [\n";
       
       $foundWarnings = FALSE;
       foreach($this->errors as $error)
@@ -589,7 +612,14 @@
         {
           $json .= "      {\n";
           $json .= "        \"id\": \"".$error['id']."\",\n";
-          $json .= "        \"datatypeProperty\": \"".$error['datatypeProperty']."\"\n";
+          
+          if(!empty($error['datatypeProperty']))
+          {
+            $json .= "        \"datatypeProperty\": \"".$error['datatypeProperty']."\",\n";
+          }
+          
+          $json = substr($json, 0, strlen($json) - 2)."\n";
+          
           $json .= "      },\n";
           
           $foundWarnings = TRUE;
@@ -601,8 +631,11 @@
         $json = substr($json, 0, strlen($json) - 2)."\n";
       }
       
+      $json .= "    ],\n";    
       
-       $foundErrors = FALSE;
+      $json .= "    \"validationErrors\": [\n";
+    
+      $foundErrors = FALSE;
       foreach($this->errors as $error)
       {
         if($error['type'] == 'error')

@@ -204,6 +204,8 @@
                       }
                       else
                       {
+                        cecho("We couldn't get the list of super-classes of a target type from the structWSF instance\n", 'YELLOW');
+                        
                         // Log a warning
                         // Can't get the super classes of the target type
                         $this->errors[] = array(
@@ -215,6 +217,8 @@
                     }
                     else
                     {
+                      cecho("We couldn't find the ontology where the $type is defined on the structWSF instance\n", 'YELLOW');
+                      
                       // Log a warning
                       // Can't find ontology where the type $type is defined
                       $this->errors[] = array(
@@ -255,9 +259,27 @@
                   }
                 }
               }
+              else
+              {
+                cecho("We couldn't get the list of the domain of the object & datatype properties from the structWSF instance\n", 'YELLOW');
+                
+                $this->errors[] = array(
+                  'id' => 'OBJECT-DATATYPE-PROPERTIES-RANGE-54',
+                  'type' => 'warning',
+                );                 
+              }
             }           
           }
         }
+      }
+      else
+      {
+        cecho("We couldn't get the list of object & datatype properties from the structWSF instance\n", 'YELLOW');
+        
+        $this->errors[] = array(
+          'id' => 'OBJECT-DATATYPE-PROPERTIES-RANGE-53',
+          'type' => 'warning',
+        );           
       }
     }
     
@@ -298,7 +320,12 @@
         {
           $xml .= "      <warning>\n";
           $xml .= "        <id>".$error['id']."</id>\n";
-          $xml .= "        <property>".$error['property']."</property>\n";
+          
+          if(!empty($error['property']))
+          {
+            $xml .= "        <property>".$error['property']."</property>\n";
+          }
+          
           $xml .= "      </warning>\n";
         }
       }
@@ -375,7 +402,7 @@
       
       $json .= "    ],\n";
       
-      $json .= "    \"validationErrors\": [\n";
+      $json .= "    \"validationWarnings\": [\n";
       
       $foundWarnings = FALSE;
       foreach($this->errors as $error)
@@ -384,7 +411,14 @@
         {
           $json .= "      {\n";
           $json .= "        \"id\": \"".$error['id']."\",\n";
-          $json .= "        \"property\": \"".$error['property']."\"\n";  
+          
+          if(!empty($error['property']))
+          {
+            $json .= "        \"property\": \"".$error['property']."\",\n";  
+          }
+          
+          $json = substr($json, 0, strlen($json) - 2)."\n";
+          
           $json .= "      },\n";
           
           $foundWarnings = TRUE;
@@ -394,8 +428,11 @@
       if($foundWarnings)
       {
         $json = substr($json, 0, strlen($json) - 2)."\n";
-      }
+      }      
       
+      $json .= "    ],\n";      
+      
+      $json .= "    \"validationErrors\": [\n";
       
       $foundErrors = FALSE;
       foreach($this->errors as $error)
@@ -460,7 +497,9 @@
         {
           $resultset = $crudRead->getResultset()->getResultset();
     
-          return(key($resultset));
+          $this->typeOntologyCache[key($resultset)] = key($resultset);
+    
+          return($this->typeOntologyCache[key($resultset)]);
         }
         else
         {
@@ -505,6 +544,15 @@
             $affectedRecords[] = $s;
           }
         }                                
+      }
+      else
+      {
+        cecho("We couldn't get the list of affected records from the structWSF instance\n", 'YELLOW');
+        
+        $this->errors[] = array(
+          'id' => 'OBJECT-DATATYPE-PROPERTIES-RANGE-55',
+          'type' => 'warning',
+        );          
       }      
       
       return($affectedRecords);
