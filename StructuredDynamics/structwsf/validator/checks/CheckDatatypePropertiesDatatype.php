@@ -35,7 +35,7 @@
         $from .= 'from <'.$ontology.'> ';
       }
       
-      // Get the list of all the object properties used within the datasets
+      // Get the list of all the datatype properties used within the datasets
       $sparql->mime("application/sparql-results+json")
              ->query('select distinct ?p ?range
                       '.$from.'
@@ -449,6 +449,7 @@
                         'id' => 'DATATYPE-PROPERTIES-DATATYPE-101',
                         'type' => 'error',
                         'datatypeProperty' => $datatypeProperty,
+                        'expectedDatatype' => $range,
                         'invalidValue' => $value['value'],
                         'affectedRecord' => $value['affectedRecord']
                       );                                                  
