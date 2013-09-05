@@ -4,7 +4,7 @@
 
   use \StructuredDynamics\structwsf\php\api\ws\sparql\SparqlQuery;
   
-  class CheckURIExistance extends Check
+  class CheckURIExistence extends Check
   {
     function __construct()
     {
@@ -57,7 +57,7 @@
             cecho('  -> '.$uri."\n", 'LIGHT_RED');
             
             $this->errors[] = array(
-              'id' => 'URI-EXISTANCE-100',
+              'id' => 'URI-EXISTENCE-100',
               'type' => 'error',
               'uri' => $uri
             );
@@ -75,7 +75,7 @@
         cecho("We couldn't check if referenced URIs exists in the structWSF instance\n", 'YELLOW');        
         
         $this->errors[] = array(
-          'id' => 'URI-EXISTANCE-100',
+          'id' => 'URI-EXISTENCE-50',
           'type' => 'warning',
         );         
       }  
