@@ -471,7 +471,7 @@
                       cecho('        -> number of occurences: 0'."\n", 'LIGHT_RED');
                       
                       $this->errors[] = array(
-                        'id' => 'OWL-RESTRICTION-EXACT-104',
+                        'id' => 'OWL-RESTRICTION-EXACT-103',
                         'type' => 'error',
                         'invalidRecordURI' => $subject,
                         'invalidPropertyURI' => $exactCardinality['onProperty'],
