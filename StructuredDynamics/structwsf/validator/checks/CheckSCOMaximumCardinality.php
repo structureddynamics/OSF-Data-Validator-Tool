@@ -81,7 +81,7 @@
             }
             
             $sparql->mime("application/sparql-results+json")
-                   ->query('select ?s count(?s) as ?numberOfOccurences
+                   ->query('select ?s count(?s) as ?numberOfOccurrences
                             '.$from.'
                             where
                             {
@@ -100,19 +100,19 @@
                 foreach($results['results']['bindings'] as $result)
                 {
                   $subject = $result['s']['value'];
-                  $numberOfOccurences = $result['numberOfOccurences']['value'];
+                  $numberOfOccurrences = $result['numberOfOccurrences']['value'];
                   
                   cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                   cecho('     -> property: '.$property."\n", 'LIGHT_RED');
-                  cecho('        -> number of occurences: '.$numberOfOccurences."\n", 'LIGHT_RED');
+                  cecho('        -> number of occurrences: '.$numberOfOccurrences."\n", 'LIGHT_RED');
                   
                   $this->errors[] = array(
                     'id' => 'SCO-MAX-CARDINALITY-100',
                     'type' => 'error',
                     'invalidRecordURI' => $subject,
                     'invalidPropertyURI' => $property,
-                    'numberOfOccurences' => $numberOfOccurences,
-                    'maxExpectedNumberOfOccurences' => $maxCadinalities[$property]
+                    'numberOfOccurrences' => $numberOfOccurrences,
+                    'maxExpectedNumberOfOccurrences' => $maxCadinalities[$property]
                   );                  
                 }
               }
@@ -212,8 +212,8 @@
           $xml .= "        <id>".$error['id']."</id>\n";
           $xml .= "        <invalidRecordURI>".$error['invalidRecordURI']."</invalidRecordURI>\n";
           $xml .= "        <invalidPropertyURI>".$error['invalidPropertyURI']."</invalidPropertyURI>\n";
-          $xml .= "        <numberOfOccurences>".$error['numberOfOccurences']."</numberOfOccurences>\n";
-          $xml .= "        <maxExpectedNumberOfOccurences>".$error['maxExpectedNumberOfOccurences']."</maxExpectedNumberOfOccurences>\n";
+          $xml .= "        <numberOfOccurrences>".$error['numberOfOccurrences']."</numberOfOccurrences>\n";
+          $xml .= "        <maxExpectedNumberOfOccurrences>".$error['maxExpectedNumberOfOccurrences']."</maxExpectedNumberOfOccurrences>\n";
           $xml .= "      </error>\n";
         }
       }
@@ -292,8 +292,8 @@
           $json .= "        \"id\": \"".$error['id']."\",\n";
           $json .= "        \"invalidRecordURI\": \"".$error['invalidRecordURI']."\",\n";
           $json .= "        \"invalidPropertyURI\": \"".$error['invalidPropertyURI']."\",\n";
-          $json .= "        \"numberOfOccurences\": \"".$error['numberOfOccurences']."\",\n";
-          $json .= "        \"maxExpectedNumberOfOccurences\": \"".$error['maxExpectedNumberOfOccurences']."\"\n";
+          $json .= "        \"numberOfOccurrences\": \"".$error['numberOfOccurrences']."\",\n";
+          $json .= "        \"maxExpectedNumberOfOccurrences\": \"".$error['maxExpectedNumberOfOccurrences']."\"\n";
           $json .= "      },\n";
           
           $foundErrors = TRUE;

@@ -161,19 +161,19 @@
                   foreach($results['results']['bindings'] as $result)
                   {
                     $subject = $result['s']['value'];
-                    $numberOfOccurences = $result['nb_values']['value'];
+                    $numberOfOccurrences = $result['nb_values']['value'];
                     
                     cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                     cecho('     -> property: '.$minCardinality['onProperty']."\n", 'LIGHT_RED');
-                    cecho('        -> number of occurences: '.$numberOfOccurences."\n", 'LIGHT_RED');
+                    cecho('        -> number of occurrences: '.$numberOfOccurrences."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
                       'id' => 'OWL-RESTRICTION-MIN-100',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $minCardinality['onProperty'],
-                      'numberOfOccurences' => $numberOfOccurences,
-                      'minimumExpectedNumberOfOccurences' => $minCardinality['minCardinality'],
+                      'numberOfOccurrences' => $numberOfOccurrences,
+                      'minimumExpectedNumberOfOccurrences' => $minCardinality['minCardinality'],
                       'dataRange' => $minCardinality['dataRange']
                     );                  
                   }
@@ -217,15 +217,15 @@
                     
                     cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                     cecho('     -> property: '.$minCardinality['onProperty']."\n", 'LIGHT_RED');
-                    cecho('        -> number of occurences: 0'."\n", 'LIGHT_RED');
+                    cecho('        -> number of occurrences: 0'."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
                       'id' => 'OWL-RESTRICTION-MIN-100',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $minCardinality['onProperty'],
-                      'numberOfOccurences' => '0',
-                      'minimumExpectedNumberOfOccurences' => $minCardinality['minCardinality'],
+                      'numberOfOccurrences' => '0',
+                      'minimumExpectedNumberOfOccurrences' => $minCardinality['minCardinality'],
                       'dataRange' => $minCardinality['dataRange']
                     );                  
                   }
@@ -425,19 +425,19 @@
                   foreach($results['results']['bindings'] as $result)
                   {
                     $subject = $result['s']['value'];
-                    $numberOfOccurences = $result['nb_values']['value'];
+                    $numberOfOccurrences = $result['nb_values']['value'];
                     
                     cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                     cecho('     -> property: '.$minCardinality['onProperty']."\n", 'LIGHT_RED');
-                    cecho('        -> number of occurences: '.$numberOfOccurences."\n", 'LIGHT_RED');
+                    cecho('        -> number of occurrences: '.$numberOfOccurrences."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
                       'id' => 'OWL-RESTRICTION-MIN-101',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $minCardinality['onProperty'],
-                      'numberOfOccurences' => $numberOfOccurences,
-                      'minimumExpectedNumberOfOccurences' => $minCardinality['minCardinality'],
+                      'numberOfOccurrences' => $numberOfOccurrences,
+                      'minimumExpectedNumberOfOccurrences' => $minCardinality['minCardinality'],
                       'classExpression' => $minCardinality['classExpression']
                     );                  
                   }
@@ -480,15 +480,15 @@
                     
                     cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                     cecho('     -> property: '.$minCardinality['onProperty']."\n", 'LIGHT_RED');
-                    cecho('        -> number of occurences: 0'."\n", 'LIGHT_RED');
+                    cecho('        -> number of occurrences: 0'."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
                       'id' => 'OWL-RESTRICTION-MIN-101',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $minCardinality['onProperty'],
-                      'numberOfOccurences' => '0',
-                      'minimumExpectedNumberOfOccurences' => $minCardinality['minCardinality'],
+                      'numberOfOccurrences' => '0',
+                      'minimumExpectedNumberOfOccurrences' => $minCardinality['minCardinality'],
                       'classExpression' => $minCardinality['classExpression']
                     );                  
                   }
@@ -582,11 +582,11 @@
           $xml .= "        <id>".$error['id']."</id>\n";
           $xml .= "        <invalidRecordURI>".$error['invalidRecordURI']."</invalidRecordURI>\n";
           $xml .= "        <invalidPropertyURI>".$error['invalidPropertyURI']."</invalidPropertyURI>\n";
-          $xml .= "        <numberOfOccurences>".$error['numberOfOccurences']."</numberOfOccurences>\n";
+          $xml .= "        <numberOfOccurrences>".$error['numberOfOccurrences']."</numberOfOccurrences>\n";
           
-          if(!empty($error['minimumExpectedNumberOfOccurences']))
+          if(!empty($error['minimumExpectedNumberOfOccurrences']))
           {
-            $xml .= "        <minimumExpectedNumberOfOccurences>".$error['minimumExpectedNumberOfOccurences']."</minimumExpectedNumberOfOccurences>\n";
+            $xml .= "        <minimumExpectedNumberOfOccurrences>".$error['minimumExpectedNumberOfOccurrences']."</minimumExpectedNumberOfOccurrences>\n";
           }
           
           if(!empty($error['dataRange']))
@@ -676,11 +676,11 @@
           $json .= "        \"id\": \"".$error['id']."\",\n";
           $json .= "        \"invalidRecordURI\": \"".$error['invalidRecordURI']."\",\n";
           $json .= "        \"invalidPropertyURI\": \"".$error['invalidPropertyURI']."\",\n";
-          $json .= "        \"numberOfOccurences\": \"".$error['numberOfOccurences']."\",\n";
+          $json .= "        \"numberOfOccurrences\": \"".$error['numberOfOccurrences']."\",\n";
 
-          if(!empty($error['minimumExpectedNumberOfOccurences']))
+          if(!empty($error['minimumExpectedNumberOfOccurrences']))
           {
-            $json .= "        \"minimumExpectedNumberOfOccurences\": \"".$error['minimumExpectedNumberOfOccurences']."\",\n";
+            $json .= "        \"minimumExpectedNumberOfOccurrences\": \"".$error['minimumExpectedNumberOfOccurrences']."\",\n";
           }
           
           if(!empty($error['dataRange']))

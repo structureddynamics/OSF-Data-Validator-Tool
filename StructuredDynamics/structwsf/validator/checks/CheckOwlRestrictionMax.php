@@ -156,19 +156,19 @@
                   foreach($results['results']['bindings'] as $result)
                   {
                     $subject = $result['s']['value'];
-                    $numberOfOccurences = $result['nb_values']['value'];
+                    $numberOfOccurrences = $result['nb_values']['value'];
                     
                     cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                     cecho('     -> property: '.$maxCardinality['onProperty']."\n", 'LIGHT_RED');
-                    cecho('        -> number of occurences: '.$numberOfOccurences."\n", 'LIGHT_RED');
+                    cecho('        -> number of occurrences: '.$numberOfOccurrences."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
                       'id' => 'OWL-RESTRICTION-MAX-100',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $maxCardinality['onProperty'],
-                      'numberOfOccurences' => $numberOfOccurences,
-                      'maximumExpectedNumberOfOccurences' => $maxCardinality['maxCardinality'],
+                      'numberOfOccurrences' => $numberOfOccurrences,
+                      'maximumExpectedNumberOfOccurrences' => $maxCardinality['maxCardinality'],
                       'dataRange' => $maxCardinality['dataRange']
                     );                  
                   }
@@ -370,19 +370,19 @@
                   foreach($results['results']['bindings'] as $result)
                   {
                     $subject = $result['s']['value'];
-                    $numberOfOccurences = $result['nb_values']['value'];
+                    $numberOfOccurrences = $result['nb_values']['value'];
                     
                     cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                     cecho('     -> property: '.$maxCardinality['onProperty']."\n", 'LIGHT_RED');
-                    cecho('        -> number of occurences: '.$numberOfOccurences."\n", 'LIGHT_RED');
+                    cecho('        -> number of occurrences: '.$numberOfOccurrences."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
                       'id' => 'OWL-RESTRICTION-MAX-101',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $maxCardinality['onProperty'],
-                      'numberOfOccurences' => $numberOfOccurences,
-                      'maximumExpectedNumberOfOccurences' => $maxCardinality['maxCardinality'],
+                      'numberOfOccurrences' => $numberOfOccurrences,
+                      'maximumExpectedNumberOfOccurrences' => $maxCardinality['maxCardinality'],
                       'classExpression' => $maxCardinality['classExpression']
                     );                  
                   }
@@ -479,11 +479,11 @@
           $xml .= "        <id>".$error['id']."</id>\n";
           $xml .= "        <invalidRecordURI>".$error['invalidRecordURI']."</invalidRecordURI>\n";
           $xml .= "        <invalidPropertyURI>".$error['invalidPropertyURI']."</invalidPropertyURI>\n";
-          $xml .= "        <numberOfOccurences>".$error['numberOfOccurences']."</numberOfOccurences>\n";
+          $xml .= "        <numberOfOccurrences>".$error['numberOfOccurrences']."</numberOfOccurrences>\n";
           
-          if(!empty($error['maximumExpectedNumberOfOccurences']))
+          if(!empty($error['maximumExpectedNumberOfOccurrences']))
           {
-            $xml .= "        <maximumExpectedNumberOfOccurences>".$error['maximumExpectedNumberOfOccurences']."</maximumExpectedNumberOfOccurences>\n";
+            $xml .= "        <maximumExpectedNumberOfOccurrences>".$error['maximumExpectedNumberOfOccurrences']."</maximumExpectedNumberOfOccurrences>\n";
           }
           
           if(!empty($error['dataRange']))
@@ -573,11 +573,11 @@
           $json .= "        \"id\": \"".$error['id']."\",\n";
           $json .= "        \"invalidRecordURI\": \"".$error['invalidRecordURI']."\",\n";
           $json .= "        \"invalidPropertyURI\": \"".$error['invalidPropertyURI']."\",\n";
-          $json .= "        \"numberOfOccurences\": \"".$error['numberOfOccurences']."\",\n";
+          $json .= "        \"numberOfOccurrences\": \"".$error['numberOfOccurrences']."\",\n";
 
-          if(!empty($error['maximumExpectedNumberOfOccurences']))
+          if(!empty($error['maximumExpectedNumberOfOccurrences']))
           {
-            $json .= "        \"maximumExpectedNumberOfOccurences\": \"".$error['maximumExpectedNumberOfOccurences']."\",\n";
+            $json .= "        \"maximumExpectedNumberOfOccurrences\": \"".$error['maximumExpectedNumberOfOccurrences']."\",\n";
           }
           
           if(!empty($error['dataRange']))
