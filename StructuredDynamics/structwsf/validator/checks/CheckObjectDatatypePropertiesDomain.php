@@ -223,8 +223,7 @@
                       // Can't find ontology where the type $type is defined
                       $this->errors[] = array(
                         'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-52',
-                        'type' => 'warning',
-                        'property' => $objectDatatypeProperty,
+                        'type' => 'warning'
                       );                              
                     }
 
