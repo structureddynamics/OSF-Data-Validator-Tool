@@ -209,7 +209,7 @@
                         // Log a warning
                         // Can't get the super classes of the target type
                         $this->errors[] = array(
-                          'id' => 'OBJECT-DATATYPE-PROPERTIES-RANGE-51',
+                          'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-51',
                           'type' => 'warning',
                           'property' => $objectDatatypeProperty,
                         );                              
@@ -222,7 +222,7 @@
                       // Log a warning
                       // Can't find ontology where the type $type is defined
                       $this->errors[] = array(
-                        'id' => 'OBJECT-DATATYPE-PROPERTIES-RANGE-52',
+                        'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-52',
                         'type' => 'warning',
                         'property' => $objectDatatypeProperty,
                       );                              
@@ -247,7 +247,7 @@
                       cecho('  -> Property "'.$objectDatatypeProperty.'" doesn\'t match domain "'.$domain.'" for record type "'.$type.'"'."\n", 'LIGHT_RED');
                       
                       $this->errors[] = array(
-                        'id' => 'OBJECT-PROPERTIES-RANGE-100',
+                        'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-100',
                         'type' => 'error',
                         'property' => $objectDatatypeProperty,
                         'definedDomain' => $domain,
@@ -264,7 +264,7 @@
                 cecho("We couldn't get the list of the domain of the object & datatype properties from the structWSF instance\n", 'YELLOW');
                 
                 $this->errors[] = array(
-                  'id' => 'OBJECT-DATATYPE-PROPERTIES-RANGE-54',
+                  'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-54',
                   'type' => 'warning',
                 );                 
               }
@@ -277,7 +277,7 @@
         cecho("We couldn't get the list of object & datatype properties from the structWSF instance\n", 'YELLOW');
         
         $this->errors[] = array(
-          'id' => 'OBJECT-DATATYPE-PROPERTIES-RANGE-53',
+          'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-53',
           'type' => 'warning',
         );           
       }
@@ -550,7 +550,7 @@
         cecho("We couldn't get the list of affected records from the structWSF instance\n", 'YELLOW');
         
         $this->errors[] = array(
-          'id' => 'OBJECT-DATATYPE-PROPERTIES-RANGE-55',
+          'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-55',
           'type' => 'warning',
         );          
       }      
