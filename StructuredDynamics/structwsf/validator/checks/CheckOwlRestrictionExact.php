@@ -156,19 +156,19 @@
                   foreach($results['results']['bindings'] as $result)
                   {
                     $subject = $result['s']['value'];
-                    $numberOfOccurences = $result['nb_values']['value'];
+                    $numberOfOccurrences = $result['nb_values']['value'];
                     
                     cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                     cecho('     -> property: '.$exactCardinality['onProperty']."\n", 'LIGHT_RED');
-                    cecho('        -> number of occurences: '.$numberOfOccurences."\n", 'LIGHT_RED');
+                    cecho('        -> number of occurrences: '.$numberOfOccurrences."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
                       'id' => 'OWL-RESTRICTION-EXACT-100',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $exactCardinality['onProperty'],
-                      'numberOfOccurences' => $numberOfOccurences,
-                      'exactExpectedNumberOfOccurences' => $exactCardinality['exactCardinality'],
+                      'numberOfOccurrences' => $numberOfOccurrences,
+                      'exactExpectedNumberOfOccurrences' => $exactCardinality['exactCardinality'],
                       'dataRange' => $exactCardinality['dataRange']
                     );                  
                   }
@@ -214,15 +214,15 @@
                       
                       cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                       cecho('     -> property: '.$exactCardinality['onProperty']."\n", 'LIGHT_RED');
-                      cecho('        -> number of occurences: 0'."\n", 'LIGHT_RED');
+                      cecho('        -> number of occurrences: 0'."\n", 'LIGHT_RED');
                       
                       $this->errors[] = array(
                         'id' => 'OWL-RESTRICTION-EXACT-102',
                         'type' => 'error',
                         'invalidRecordURI' => $subject,
                         'invalidPropertyURI' => $exactCardinality['onProperty'],
-                        'numberOfOccurences' => '0',
-                        'exactExpectedNumberOfOccurences' => $exactCardinality['exactCardinality'],
+                        'numberOfOccurrences' => '0',
+                        'exactExpectedNumberOfOccurrences' => $exactCardinality['exactCardinality'],
                         'dataRange' => $exactCardinality['dataRange']
                       );                  
                     }
@@ -420,19 +420,19 @@
                   foreach($results['results']['bindings'] as $result)
                   {
                     $subject = $result['s']['value'];
-                    $numberOfOccurences = $result['nb_values']['value'];
+                    $numberOfOccurrences = $result['nb_values']['value'];
                     
                     cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                     cecho('     -> property: '.$exactCardinality['onProperty']."\n", 'LIGHT_RED');
-                    cecho('        -> number of occurences: '.$numberOfOccurences."\n", 'LIGHT_RED');
+                    cecho('        -> number of occurrences: '.$numberOfOccurrences."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
                       'id' => 'OWL-RESTRICTION-EXACT-101',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $exactCardinality['onProperty'],
-                      'numberOfOccurences' => $numberOfOccurences,
-                      'exactExpectedNumberOfOccurences' => $exactCardinality['exactCardinality'],
+                      'numberOfOccurrences' => $numberOfOccurrences,
+                      'exactExpectedNumberOfOccurrences' => $exactCardinality['exactCardinality'],
                       'classExpression' => $exactCardinality['classExpression']
                     );                  
                   }
@@ -468,15 +468,15 @@
                       
                       cecho('  -> record: '.$subject."\n", 'LIGHT_RED');
                       cecho('     -> property: '.$exactCardinality['onProperty']."\n", 'LIGHT_RED');
-                      cecho('        -> number of occurences: 0'."\n", 'LIGHT_RED');
+                      cecho('        -> number of occurrences: 0'."\n", 'LIGHT_RED');
                       
                       $this->errors[] = array(
                         'id' => 'OWL-RESTRICTION-EXACT-103',
                         'type' => 'error',
                         'invalidRecordURI' => $subject,
                         'invalidPropertyURI' => $exactCardinality['onProperty'],
-                        'numberOfOccurences' => '0',
-                        'exactExpectedNumberOfOccurences' => $exactCardinality['exactCardinality'],
+                        'numberOfOccurrences' => '0',
+                        'exactExpectedNumberOfOccurrences' => $exactCardinality['exactCardinality'],
                         'classExpression' => $exactCardinality['classExpression']
                       );                  
                     }
@@ -574,11 +574,11 @@
           $xml .= "        <id>".$error['id']."</id>\n";
           $xml .= "        <invalidRecordURI>".$error['invalidRecordURI']."</invalidRecordURI>\n";
           $xml .= "        <invalidPropertyURI>".$error['invalidPropertyURI']."</invalidPropertyURI>\n";
-          $xml .= "        <numberOfOccurences>".$error['numberOfOccurences']."</numberOfOccurences>\n";
+          $xml .= "        <numberOfOccurrences>".$error['numberOfOccurrences']."</numberOfOccurrences>\n";
           
-          if(!empty($error['exactExpectedNumberOfOccurences']))
+          if(!empty($error['exactExpectedNumberOfOccurrences']))
           {
-            $xml .= "        <exactExpectedNumberOfOccurences>".$error['exactExpectedNumberOfOccurences']."</exactExpectedNumberOfOccurences>\n";
+            $xml .= "        <exactExpectedNumberOfOccurrences>".$error['exactExpectedNumberOfOccurrences']."</exactExpectedNumberOfOccurrences>\n";
           }
           
           if(!empty($error['dataRange']))
@@ -668,11 +668,11 @@
           $json .= "        \"id\": \"".$error['id']."\",\n";
           $json .= "        \"invalidRecordURI\": \"".$error['invalidRecordURI']."\",\n";
           $json .= "        \"invalidPropertyURI\": \"".$error['invalidPropertyURI']."\",\n";
-          $json .= "        \"numberOfOccurences\": \"".$error['numberOfOccurences']."\",\n";
+          $json .= "        \"numberOfOccurrences\": \"".$error['numberOfOccurrences']."\",\n";
 
-          if(!empty($error['exactExpectedNumberOfOccurences']))
+          if(!empty($error['exactExpectedNumberOfOccurrences']))
           {
-            $json .= "        \"exactExpectedNumberOfOccurences\": \"".$error['exactExpectedNumberOfOccurences']."\",\n";
+            $json .= "        \"exactExpectedNumberOfOccurrences\": \"".$error['exactExpectedNumberOfOccurrences']."\",\n";
           }
           
           if(!empty($error['dataRange']))
