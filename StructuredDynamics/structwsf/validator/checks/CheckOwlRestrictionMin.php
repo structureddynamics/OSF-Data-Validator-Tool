@@ -220,7 +220,7 @@
                     cecho('        -> number of occurrences: 0'."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
-                      'id' => 'OWL-RESTRICTION-MIN-100',
+                      'id' => 'OWL-RESTRICTION-MIN-102',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $minCardinality['onProperty'],
@@ -483,7 +483,7 @@
                     cecho('        -> number of occurrences: 0'."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
-                      'id' => 'OWL-RESTRICTION-MIN-101',
+                      'id' => 'OWL-RESTRICTION-MIN-103',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $minCardinality['onProperty'],
