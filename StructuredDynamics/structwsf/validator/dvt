@@ -17,18 +17,19 @@
   $config = parse_ini_file("config.ini", TRUE);
   
   // Get commandline options
-  $arguments = getopt('h::v::s::', array('help::', 
-                                         'output-xml::',
-                                         'output-json::',
-                                         'allocated-memory::'));  
+  $arguments = getopt('h::v::s::f::', array('help::', 
+                                            'output-xml::',
+                                            'output-json::',
+                                            'allocated-memory::',
+                                            'fix::'));  
   
   // Displaying DSF's help screen if required
   if(isset($arguments['h']) || isset($arguments['help']))
   {
-    cecho("Usage: dvt [OPTIONS]\n\n\n", 'WHITE');
+    cecho("Usage: dvt [OPTIONS]\n\n", 'WHITE');
     cecho("Usage examples: \n", 'WHITE');
     cecho("    Validate data: dvt -v\n", 'WHITE');
-    cecho("Options:\n", 'WHITE');
+    cecho("\nOptions:\n", 'WHITE');
     cecho("--output-xml=\"[PATH]\"                 Output the validation reports in a file specified\n", 'WHITE');
     cecho("                                      by the path in XML format.\n", 'WHITE');
     cecho("--output-json=\"[PATH]\"                Output the validation reports in a file specified\n", 'WHITE');
@@ -37,7 +38,10 @@
     cecho("                                      The number of Mb should be specified in this parameter\n", 'WHITE');
     cecho("-v                                    Run all the data validation tests\n", 'WHITE');
     cecho("-s                                    Silent. Do not output anything to the shell.\n", 'WHITE');
+    cecho("-f, --fix                             Tries to automatically fix a validation test that fails\n", 'WHITE');
+    cecho("                                      Note: not all checks support this option\n", 'WHITE');
     cecho("-h, --help                            Show this help section\n\n", 'WHITE');
+    cecho("\n", 'WHITE');
     exit;
   }     
   
@@ -135,6 +139,11 @@
       $check->setCheckOnDatasets($config['data']['datasets']);
       
       $check->run();   
+      
+      if(isset($arguments['fix']) || isset($arguments['f']))      
+      {
+        $check->fix();
+      }
       
       if(!empty($outputXMLPath))
       {

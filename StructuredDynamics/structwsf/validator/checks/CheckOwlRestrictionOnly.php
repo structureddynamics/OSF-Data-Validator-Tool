@@ -404,6 +404,10 @@
       }      
     }
     
+    public function fix()
+    {
+    }    
+    
     public function outputXML()
     {
       if(count($this->errors) <= 0)

@@ -51,9 +51,9 @@ Usage Documentation
 ```
 Usage: dvt [OPTIONS]
 
-
 Usage examples:
     Validate data: dvt -v
+
 Options:
 --output-xml="[PATH]"                 Output the validation reports in a file specified
                                       by the path in XML format.
@@ -63,5 +63,7 @@ Options:
                                       The number of Mb should be specified in this parameter
 -v                                    Run all the data validation tests
 -s                                    Silent. Do not output anything to the shell.
+-f, --fix                             Tries to automatically fix a validation test that fails
+                                      Note: not all checks support this option
 -h, --help                            Show this help section
 ```
