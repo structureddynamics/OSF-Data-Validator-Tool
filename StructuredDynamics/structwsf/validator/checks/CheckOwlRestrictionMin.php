@@ -575,7 +575,7 @@
 
                     // If it doesn't match, then we report an error directly
                     $this->errors[] = array(
-                      'id' => 'OWL-RESTRICTION-MIN-58',
+                      'id' => 'OWL-RESTRICTION-MIN-104',
                       'type' => 'error',
                       'datatypeProperty' => $minCardinality['onProperty'],
                       'expectedDatatype' => $minCardinality['dataRange'],

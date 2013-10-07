@@ -518,7 +518,7 @@
 
                     // If it doesn't match, then we report an error directly
                     $this->errors[] = array(
-                      'id' => 'OWL-RESTRICTION-MAX-56',
+                      'id' => 'OWL-RESTRICTION-MAX-102',
                       'type' => 'error',
                       'datatypeProperty' => $maxCardinality['onProperty'],
                       'expectedDatatype' => $maxCardinality['dataRange'],

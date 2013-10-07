@@ -497,15 +497,13 @@
                 if(!$atLeastOneExists)
                 {
                   cecho('  -> Couldn\'t find one value for the datatype property "'.$datatypeProperty.'" to match the datatype range "'.$range.'"'."\n", 'LIGHT_RED');
-                  cecho('     -> Affected record: "'.$value['affectedRecord'].'"'."\n", 'YELLOW');
                   
                   // If it doesn't match, then we report an error directly
                   $this->errors[] = array(
-                    'id' => 'OWL-RESTRICTION-SOME-56',
+                    'id' => 'OWL-RESTRICTION-SOME-102',
                     'type' => 'error',
                     'datatypeProperty' => $existential['onProperty'],
-                    'expectedDatatype' => $existential['dataRange'],
-                    'affectedRecord' => $value['affectedRecord']
+                    'expectedDatatype' => $existential['dataRange']
                   );                                                  
                 }                
               }

@@ -573,7 +573,7 @@
 
                     // If it doesn't match, then we report an error directly
                     $this->errors[] = array(
-                      'id' => 'OWL-RESTRICTION-EXACT-56',
+                      'id' => 'OWL-RESTRICTION-EXACT-104',
                       'type' => 'error',
                       'datatypeProperty' => $exactCardinality['onProperty'],
                       'expectedDatatype' => $exactCardinality['dataRange'],

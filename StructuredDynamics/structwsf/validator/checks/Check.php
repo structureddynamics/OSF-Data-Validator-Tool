@@ -538,16 +538,14 @@
       * This vocabulary is composed of the following properties:
       * 
       *   (1)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#base
-      *   (2)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#fractionDigits      
-      *   (3)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#length      
-      *   (4)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxExclusive      
-      *   (5)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxInclusive      
-      *   (6)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxLength      
-      *   (7)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#minExclusive       
-      *   (8)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#minInclusive      
-      *   (9)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#minLength      
-      *   (10) http://www.owl-ontologies.com/2005/08/07/xsp.owl#pattern      
-      *   (11) http://www.owl-ontologies.com/2005/08/07/xsp.owl#totalDigits      
+      *   (2)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#length      
+      *   (3)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxExclusive      
+      *   (4)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxInclusive      
+      *   (5)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxLength      
+      *   (6)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#minExclusive       
+      *   (7)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#minInclusive      
+      *   (8)  http://www.owl-ontologies.com/2005/08/07/xsp.owl#minLength      
+      *   (9) http://www.owl-ontologies.com/2005/08/07/xsp.owl#pattern      
       * 
       */
       
@@ -583,7 +581,19 @@
           {
             $datatypeDesc[$binding['p']['value']] = $binding['o']['value'];
           }
-        }        
+        }
+        
+        if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#pattern']))
+        {
+          if(preg_match('/'.str_replace('/', '\\/', $datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#pattern']).'/', $value) == 1)
+          {
+            return(TRUE);
+          }
+          else
+          {
+            return(FALSE);
+          }
+        }
 
         if($this->validateString($value))
         {

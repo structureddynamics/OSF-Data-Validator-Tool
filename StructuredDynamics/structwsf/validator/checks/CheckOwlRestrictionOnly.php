@@ -169,7 +169,7 @@
                     cecho('     -> property: '.$universal['onProperty']."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
-                      'id' => 'OWL-RESTRICTION-ALL-100',
+                      'id' => 'OWL-RESTRICTION-ONLY-100',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $universal['onProperty'],
@@ -184,7 +184,7 @@
                 
                 // Error: can't get the number of properties used per record
                 $this->errors[] = array(
-                  'id' => 'OWL-RESTRICTION-ALL-51',
+                  'id' => 'OWL-RESTRICTION-ONLY-51',
                   'type' => 'warning',
                 );                     
               }
@@ -512,7 +512,7 @@
 
                     // If it doesn't match, then we report an error directly
                     $this->errors[] = array(
-                      'id' => 'OWL-RESTRICTION-ALL-55',
+                      'id' => 'OWL-RESTRICTION-ONLY-102',
                       'type' => 'error',
                       'datatypeProperty' => $universal['onProperty'],
                       'expectedDatatype' => $universal['dataRange'],
@@ -527,7 +527,7 @@
                 cecho("We couldn't get the list of values for the $datatypePropety property\n", 'YELLOW');
                 
                 $this->errors[] = array(
-                  'id' => 'OWL-RESTRICTION-ALL-54',
+                  'id' => 'OWL-RESTRICTION-ONLY-54',
                   'type' => 'warning',
                 );
               }                            
@@ -550,7 +550,7 @@
         
         // Error: can't get the list of retrictions
         $this->errors[] = array(
-          'id' => 'OWL-RESTRICTION-ALL-50',
+          'id' => 'OWL-RESTRICTION-ONLY-50',
           'type' => 'warning',
         );                     
       }
@@ -681,7 +681,7 @@
                                     
                   // Error: can't get the subclasses of a target ontology
                   $this->errors[] = array(
-                    'id' => 'OWL-RESTRICTION-ALL-53',
+                    'id' => 'OWL-RESTRICTION-ONLY-53',
                     'type' => 'warning',
                   );                     
                 }
@@ -718,7 +718,7 @@
                     cecho('     -> property: '.$universal['onProperty']."\n", 'LIGHT_RED');
                     
                     $this->errors[] = array(
-                      'id' => 'OWL-RESTRICTION-ALL-101',
+                      'id' => 'OWL-RESTRICTION-ONLY-101',
                       'type' => 'error',
                       'invalidRecordURI' => $subject,
                       'invalidPropertyURI' => $universal['onProperty'],
@@ -732,7 +732,7 @@
                 cecho("We couldn't check if the universal restriction was respected from the structWSF instance\n", 'YELLOW');
                 
                 $this->errors[] = array(
-                  'id' => 'OWL-RESTRICTION-ALL-53',
+                  'id' => 'OWL-RESTRICTION-ONLY-53',
                   'type' => 'warning',
                 );                    
               }
@@ -751,7 +751,7 @@
         
         // Error: can't get the number of object properties used per record
         $this->errors[] = array(
-          'id' => 'OWL-RESTRICTION-ALL-52',
+          'id' => 'OWL-RESTRICTION-ONLY-52',
           'type' => 'warning',
         );                     
       }      
