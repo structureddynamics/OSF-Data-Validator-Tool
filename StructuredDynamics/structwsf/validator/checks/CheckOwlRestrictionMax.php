@@ -24,6 +24,9 @@
       
       cecho("Data validation test: ".$this->description."...\n\n", 'LIGHT_BLUE');
 
+      // First, get the list of all the possible custom datatypes and their possible base datatype
+      $customDatatypes = $this->getCustomDatatypes();       
+      
       // Check for Max Cardinality restriction on Datatype Properties    
       $sparql = new SparqlQuery($this->network);
 
@@ -128,7 +131,14 @@
                 }
                 else
                 {
-                  $datatypeFilter = 'filter((str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\') && ?onProperty in (<'.$maxCardinality['onProperty'].'>))';
+                  if(!empty($customDatatypes[$maxCardinality['dataRange']]))
+                  {
+                    $datatypeFilter = 'filter((str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$maxCardinality['dataRange']].'\') && ?onProperty in (<'.$maxCardinality['onProperty'].'>))';
+                  }
+                  else
+                  {
+                    $datatypeFilter = 'filter((str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\') && ?onProperty in (<'.$maxCardinality['onProperty'].'>))';
+                  }   
                 }
               }
               
@@ -184,6 +194,349 @@
                   'type' => 'warning',
                 );                     
               }
+              
+              // Now let's make sure that there is at least one triple where the value belongs
+              // to the defined datatype
+              $values = array();
+              
+              if(!empty($maxCardinality['dataRange']))
+              {
+                if($maxCardinality['dataRange'] == 'http://www.w3.org/2000/01/rdf-schema#Literal')
+                {
+                  $datatypeFilter = 'filter(str(datatype(?value)) = \'http://www.w3.org/2000/01/rdf-schema#Literal\' || str(datatype(?value)) = \'http://www.w3.org/2001/XMLSchema#string\')';
+                }
+                else
+                {
+                  if(!empty($customDatatypes[$maxCardinality['dataRange']]))
+                  {
+                    $datatypeFilter = 'filter(str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$maxCardinality['dataRange']].'\' )';
+                  }
+                  else
+                  {
+                    $datatypeFilter = 'filter(str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\')';
+                  }
+                }
+              }              
+              
+              $sparql = new SparqlQuery($this->network);
+
+              $from = '';
+              
+              foreach($this->checkOnDatasets as $dataset)
+              {
+                $from .= 'from <'.$dataset.'> ';
+              }
+              
+              $sparql->mime("application/sparql-results+json")
+                     ->query('select distinct ?value ?s
+                              '.$from.'
+                              where
+                              {
+                                ?s a <'.$class.'> ;
+                                   <'.$maxCardinality['onProperty'].'> ?value.
+                                '.$datatypeFilter.'
+                              }')
+                     ->send();
+              
+              if($sparql->isSuccessful())
+              {
+                $results = json_decode($sparql->getResultset(), TRUE);
+                $values = array();    
+                
+                if(isset($results['results']['bindings']) && count($results['results']['bindings']) > 0)
+                {
+                  foreach($results['results']['bindings'] as $result)
+                  {
+                    $value = $result['value']['value'];                    
+                    
+                    $s = '';
+                    if(isset($result['s']))
+                    {
+                      $s = $result['s']['value'];
+                    }                        
+                    
+                    $values[] = array(
+                      'value' => $value,
+                      'type' => $maxCardinality['dataRange'],
+                      'affectedRecord' => $s
+                    );
+                  }
+                }
+
+                // For each value/type(s), we do validate that the range is valid
+                
+                // We just need to get one triple where the value comply with the defined datatype
+                // to have this check validated
+                foreach($values as $value)
+                {
+                  // First, check if we have a type defined for the value. If not, then we infer it is rdfs:Literal
+                  if(empty($value['type']))
+                  {
+                    $value['type'] = array('http://www.w3.org/2000/01/rdf-schema#Literal');
+                  }
+                                    
+                  // If then match, then we make sure that the value is valid according to the
+                  // internal Check datatype validation tests
+
+                  $datatypeValidationError = FALSE;
+                  
+                  switch($value['type'])
+                  {
+                    case "http://www.w3.org/2001/XMLSchema#base64Binary":
+                      if(!$this->validateBase64Binary($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#boolean":
+                      if(!$this->validateBoolean($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#byte":
+                      if(!$this->validateByte($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#dateTimeStamp":
+                      if(!$this->validateDateTimeStampISO8601($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#dateTime":
+                      if(!$this->validateDateTimeISO8601($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#decimal":
+                      if(!$this->validateDecimal($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#double":
+                      if(!$this->validateDouble($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#float":
+                      if(!$this->validateFloat($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#hexBinary":
+                      if(!$this->validateHexBinary($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#int":
+                      if(!$this->validateInt($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#integer":
+                      if(!$this->validateInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#language":
+                      if(!$this->validateLanguage($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#long":
+                      if(!$this->validateLong($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#Name":
+                      if(!$this->validateName($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#NCName":
+                      if(!$this->validateNCName($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#negativeInteger":
+                      if(!$this->validateNegativeInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#NMTOKEN":
+                      if(!$this->validateNMTOKEN($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#nonNegativeInteger":
+                      if(!$this->validateNonNegativeInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#nonPositiveInteger":
+                      if(!$this->validateNonPositiveInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#normalizedString":
+                      if(!$this->validateNormalizedString($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral":
+                      if(!$this->validatePlainLiteral($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#positiveInteger":
+                      if(!$this->validatePositiveInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#short":
+                      if(!$this->validateShort($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#string":
+                      if(!$this->validateString($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#token":
+                      if(!$this->validateToken($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#unsignedByte":
+                      if(!$this->validateUnsignedByte($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#unsignedInt":
+                      if(!$this->validateUnsignedInt($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#unsignedLong":
+                      if(!$this->validateUnsignedLong($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#unsignedShort":
+                      if(!$this->validateUnsignedShort($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral":
+                      if(!$this->validateXMLLiteral($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#anyURI":
+                      if(!$this->validateAnyURI($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    default:
+                      // Custom type, try to validate it according to the 
+                      // description of that custom datatype within the 
+                      // ontology
+                      
+                      if(!$this->validateCustomDatatype($value['type'], $value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                  }
+                  
+                  if($datatypeValidationError === TRUE)
+                  {
+                    cecho('  -> Couldn\'t validate that this value: "'.$value['value'].'" belong to the datatype "'.$maxCardinality['dataRange'].'"'."\n", 'LIGHT_RED');
+                    cecho('     -> Affected record: "'.$value['affectedRecord'].'"'."\n", 'YELLOW');
+
+                    // If it doesn't match, then we report an error directly
+                    $this->errors[] = array(
+                      'id' => 'OWL-RESTRICTION-MAX-56',
+                      'type' => 'error',
+                      'datatypeProperty' => $maxCardinality['onProperty'],
+                      'expectedDatatype' => $maxCardinality['dataRange'],
+                      'invalidValue' => $value['value'],
+                      'affectedRecord' => $value['affectedRecord']
+                    );                     
+                  }
+                }               
+              }
+              else
+              {
+                cecho("We couldn't get the list of values for the $datatypePropety property\n", 'YELLOW');
+                
+                $this->errors[] = array(
+                  'id' => 'OWL-RESTRICTION-MAX-55',
+                  'type' => 'warning',
+                );
+              }              
             }
           }
           
