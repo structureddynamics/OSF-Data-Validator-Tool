@@ -95,7 +95,7 @@
               }
             }
           }
-          DebugBreak();
+
           // Now, for each datatype properties that have a datatype range defined,
           // we:
           // 
