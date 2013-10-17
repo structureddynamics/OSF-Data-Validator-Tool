@@ -1,13 +1,7 @@
 <?php
   function cecho($text, $color="NORMAL", $return = FALSE)
   {
-    global $silent;
-    
-    if($silent)
-    {
-      return;
-    }
-    
+    $color = strtoupper($color);
     $_colors = array(
       'LIGHT_RED'    => "[1;31m",
       'LIGHT_GREEN'  => "[1;32m",
@@ -27,6 +21,20 @@
       'UNDERSCORE'   => "[4m",
       'REVERSE'      => "[7m",
     );    
+    
+    // Check for markup
+    // {underscore}abc{/underscore} => underscore abc
+    // {bold}abc{/bold} => bold abc
+    // {red}abc{/red}
+    
+    foreach(array_keys($_colors) as $cc)
+    {
+      $c = strtolower($cc);
+      if(stripos($text, '{'.$c.'}') !== FALSE)
+      {
+        $text = str_replace(array('{'.$c.'}', '{/'.$c.'}'), array(chr(27).$_colors[$cc], chr(27)."[0m".chr(27).$_colors[$color]), $text);
+      }
+    }
     
     $out = $_colors["$color"];
     
