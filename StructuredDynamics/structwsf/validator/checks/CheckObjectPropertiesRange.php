@@ -23,7 +23,7 @@
       
       cecho("Data validation test: ".$this->description."...\n\n", 'LIGHT_BLUE');
 
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -116,7 +116,7 @@
             {
               $values = array();
               
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -203,7 +203,7 @@
                       
                       if($ontologyURI !== FALSE)
                       {
-                        $ontologyRead = new OntologyReadQuery($this->network);
+                        $ontologyRead = new OntologyReadQuery($this->network, $this->appID, $this->apiKey, $this->user);
                         
                         $getSuperClassesFunc = new GetSuperClassesFunction();
                         
@@ -539,7 +539,7 @@
       }
       else
       {
-        $crudRead = new CrudReadQuery($this->network);
+        $crudRead = new CrudReadQuery($this->network, $this->appID, $this->apiKey, $this->user);
         
         $crudRead->uri($type)
                  ->mime('resultset')
@@ -562,7 +562,7 @@
     {
       $affectedRecords = array();
                               
-      $sparqlAffectedRecords = new SparqlQuery($this->network);
+      $sparqlAffectedRecords = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       

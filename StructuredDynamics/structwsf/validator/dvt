@@ -14,7 +14,7 @@
   }   
   
   // Load configurations
-  $config = parse_ini_file("config.ini", TRUE);
+  $config = parse_ini_file("dvt.ini", TRUE);
   
   // Get commandline options
   $arguments = getopt('h::v::s::f::', array('help::', 
@@ -137,6 +137,9 @@
       $check->setNetwork($config['structwsf']['network']);
       $check->setCheckUsingOntologies($config['data']['ontologies']);
       $check->setCheckOnDatasets($config['data']['datasets']);
+      $check->setUser($config["credentials"]["user"]);
+      $check->setApiKey($config["credentials"]["api-key"]);
+      $check->setAppID($config["credentials"]["application-id"]);
       
       $check->run();   
       

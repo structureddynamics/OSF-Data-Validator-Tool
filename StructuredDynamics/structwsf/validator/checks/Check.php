@@ -11,6 +11,9 @@
     protected $checkOnDatasets;
     protected $checkUsingOntologies;
     protected $network;
+    protected $appID;
+    protected $user;
+    protected $apiKey;
     protected $errors = array(); 
     
     function __construct(){}
@@ -34,6 +37,21 @@
     {
       $this->network = $network;
     } 
+    
+    public function setAppID($appID)
+    {
+      $this->appID = $appID;
+    }
+    
+    public function setUser($user)
+    {
+      $this->user = $user;
+    }
+    
+    public function setApiKey($apiKey)
+    {
+      $this->apiKey = $apiKey;
+    }
     
     /** Encode a string to put in a JSON value
             
@@ -550,7 +568,7 @@
       */
       
       // Get the description of that custom datatype
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -963,7 +981,7 @@
     
     protected function getCustomDatatypes()
     {
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       

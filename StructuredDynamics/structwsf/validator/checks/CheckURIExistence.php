@@ -24,7 +24,7 @@
       
       cecho("Data validation test: ".$this->description."...\n\n", 'LIGHT_BLUE');
 
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -336,7 +336,7 @@
     {
       $affectedRecords = array();
                               
-      $sparqlAffectedRecords = new SparqlQuery($this->network);
+      $sparqlAffectedRecords = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -391,7 +391,7 @@
 
     private function fixURIReference($unexistingURI, $affectedURI, $dataset)
     {
-      $crudRead = new CrudReadQuery($this->network);
+      $crudRead = new CrudReadQuery($this->network, $this->appID, $this->apiKey, $this->user);
       
       $crudRead->dataset($dataset)
                ->uri($affectedURI)
@@ -423,7 +423,7 @@
                 // Use the CRUD: Update endpoint to do the modifications. That way we will revision all the changes
                 // performed by this fix procedure.
                 
-                $crudUpdate = new CrudUpdateQuery($this->network);                
+                $crudUpdate = new CrudUpdateQuery($this->network, $this->appID, $this->apiKey, $this->user);                
                 
                 $crudUpdate->dataset($dataset)
                            ->createRevision()

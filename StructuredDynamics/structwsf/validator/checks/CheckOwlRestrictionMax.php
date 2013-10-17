@@ -28,7 +28,7 @@
       $customDatatypes = $this->getCustomDatatypes();       
       
       // Check for Max Cardinality restriction on Datatype Properties    
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -105,7 +105,7 @@
           {
             foreach($maxCards as $maxCardinality)
             {
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -218,7 +218,7 @@
                 }
               }              
               
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -562,7 +562,7 @@
       }
       
       // Check for Max Cardinality restriction on Object Properties      
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -639,7 +639,7 @@
           {
             foreach($maxCards as $maxCardinality)
             {
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -665,7 +665,7 @@
                                       ->allSubClasses()
                                       ->uri($maxCardinality['classExpression']);
                                         
-                $ontologyRead = new OntologyReadQuery($this->network);
+                $ontologyRead = new OntologyReadQuery($this->network, $this->appID, $this->apiKey, $this->user);
                 
                 $ontologyRead->ontology($this->getClassOntology($maxCardinality['classExpression']))
                              ->getSubClasses($getSubClassesFunction)
@@ -975,7 +975,7 @@
       }
       else
       {
-        $crudRead = new CrudReadQuery($this->network);
+        $crudRead = new CrudReadQuery($this->network, $this->appID, $this->apiKey, $this->user);
         
         $classes = array();
         

@@ -35,7 +35,7 @@
       $customDatatypes = $this->getCustomDatatypes();
       
       // Check for existential restriction on Datatype Properties    
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -102,7 +102,7 @@
           {
             foreach($exists as $existential)
             {
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -193,7 +193,7 @@
               // to the defined datatype
               $values = array();
               
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -541,7 +541,7 @@
       }
       
       // Check for existential restriction on Object Properties      
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -608,7 +608,7 @@
           {
             foreach($exists as $existential)
             {
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -634,7 +634,7 @@
                                       ->allSubClasses()
                                       ->uri($existential['classExpression']);
                                         
-                $ontologyRead = new OntologyReadQuery($this->network);
+                $ontologyRead = new OntologyReadQuery($this->network, $this->appID, $this->apiKey, $this->user);
                 
                 $ontologyRead->ontology($this->getClassOntology($existential['classExpression']))
                              ->getSubClasses($getSubClassesFunction)
@@ -919,7 +919,7 @@
       }
       else
       {
-        $crudRead = new CrudReadQuery($this->network);
+        $crudRead = new CrudReadQuery($this->network, $this->appID, $this->apiKey, $this->user);
         
         $classes = array();
         

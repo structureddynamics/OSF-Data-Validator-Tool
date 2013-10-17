@@ -19,7 +19,7 @@
       
       cecho("Data validation test: ".$this->description."...\n\n", 'LIGHT_BLUE');
 
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -111,7 +111,7 @@
             {
               $values = array();
               
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               

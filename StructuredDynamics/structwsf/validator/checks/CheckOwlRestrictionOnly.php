@@ -35,7 +35,7 @@
       $customDatatypes = $this->getCustomDatatypes();      
       
       // Check for universal restriction on Datatype Properties    
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -102,7 +102,7 @@
           {
             foreach($univs as $universal)
             {
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -212,7 +212,7 @@
                 }
               }              
               
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -556,7 +556,7 @@
       }
       
       // Check for universal restriction on Object Properties      
-      $sparql = new SparqlQuery($this->network);
+      $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
       $from = '';
       
@@ -623,7 +623,7 @@
           {
             foreach($univs as $universal)
             {
-              $sparql = new SparqlQuery($this->network);
+              $sparql = new SparqlQuery($this->network, $this->appID, $this->apiKey, $this->user);
 
               $from = '';
               
@@ -649,7 +649,7 @@
                                       ->allSubClasses()
                                       ->uri($universal['classExpression']);
                                         
-                $ontologyRead = new OntologyReadQuery($this->network);
+                $ontologyRead = new OntologyReadQuery($this->network, $this->appID, $this->apiKey, $this->user);
                 
                 $ontologyRead->ontology($this->getClassOntology($universal['classExpression']))
                              ->getSubClasses($getSubClassesFunction)
@@ -942,7 +942,7 @@
       }
       else
       {
-        $crudRead = new CrudReadQuery($this->network);
+        $crudRead = new CrudReadQuery($this->network, $this->appID, $this->apiKey, $this->user);
         
         $classes = array();
         
