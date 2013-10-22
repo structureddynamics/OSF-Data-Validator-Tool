@@ -454,6 +454,7 @@
                         'type' => 'error',
                         'datatypeProperty' => $datatypeProperty,
                         'expectedDatatype' => $range,
+                        'valueDatatype' => $value['type'],
                         'invalidValue' => $value['value'],
                         'affectedRecord' => $value['affectedRecord']
                       );                                                  
@@ -563,6 +564,10 @@
             $xml .= "        <value>".$error['value']."</value>\n";
           }
 
+          if(isset($error['invalidValue']) && !empty($error['invalidValue']))
+          {
+            $xml .= "        <invalidValue>".$error['invalidValue']."</invalidValue>\n";
+          }
           if(isset($error['affectedRecord']) && !empty($error['affectedRecord']))
           {
             $xml .= "        <affectedRecord>".$error['affectedRecord']."</affectedRecord>\n";
@@ -666,6 +671,11 @@
           if(isset($error['value']) && !empty($error['value']))
           {
             $json .= "        \"value\": \"".$error['value']."\",\n";
+          }
+          
+          if(isset($error['invalidValue']) && !empty($error['invalidValue']))
+          {
+            $json .= "        \"invalidValue\": \"".$error['invalidValue']."\",\n";
           }
           
           if(isset($error['affectedRecord']) && !empty($error['affectedRecord']))

@@ -929,9 +929,41 @@
         {
           $xml .= "      <error>\n";
           $xml .= "        <id>".$error['id']."</id>\n";
-          $xml .= "        <invalidRecordURI>".$error['invalidRecordURI']."</invalidRecordURI>\n";
-          $xml .= "        <invalidPropertyURI>".$error['invalidPropertyURI']."</invalidPropertyURI>\n";
-          $xml .= "        <numberOfOccurrences>".$error['numberOfOccurrences']."</numberOfOccurrences>\n";
+          
+          if(!empty($error['datatypeProperty']))
+          {
+            $xml .= "        <datatypeProperty>".$error['datatypeProperty']."</datatypeProperty>\n";
+          }
+          
+          if(isset($error['expectedDatatype']) && !empty($error['expectedDatatype']))
+          {
+            $xml .= "        <expectedDatatype>".$error['expectedDatatype']."</expectedDatatype>\n";
+          }
+          
+          if(isset($error['valueDatatype']) && !empty($error['valueDatatype']))
+          {
+            $xml .= "        <valueDatatype>".$error['valueDatatype']."</valueDatatype>\n";
+          }
+
+          if(isset($error['invalidValue']) && !empty($error['invalidValue']))
+          {
+            $xml .= "        <invalidValue>".$error['invalidValue']."</invalidValue>\n";
+          }          
+          
+          if(isset($error['invalidRecordURI']) && !empty($error['invalidRecordURI']))
+          {
+            $xml .= "        <invalidRecordURI>".$error['invalidRecordURI']."</invalidRecordURI>\n";
+          }
+  
+          if(!empty($error['invalidPropertyURI']))
+          {
+            $xml .= "        <invalidPropertyURI>".$error['invalidPropertyURI']."</invalidPropertyURI>\n";
+          }
+          
+          if(!empty($error['numberOfOccurrences']))
+          {
+            $xml .= "        <numberOfOccurrences>".$error['numberOfOccurrences']."</numberOfOccurrences>\n";
+          }
           
           if(!empty($error['exactExpectedNumberOfOccurrences']))
           {
@@ -1023,9 +1055,42 @@
         {
           $json .= "      {\n";
           $json .= "        \"id\": \"".$error['id']."\",\n";
-          $json .= "        \"invalidRecordURI\": \"".$error['invalidRecordURI']."\",\n";
-          $json .= "        \"invalidPropertyURI\": \"".$error['invalidPropertyURI']."\",\n";
-          $json .= "        \"numberOfOccurrences\": \"".$error['numberOfOccurrences']."\",\n";
+          
+          if(!empty($error['invalidRecordURI']))
+          {
+            $json .= "        \"invalidRecordURI\": \"".$error['invalidRecordURI']."\",\n";
+          }
+          
+          if(!empty($error['invalidPropertyURI']))
+          {
+            $json .= "        \"invalidPropertyURI\": \"".$error['invalidPropertyURI']."\",\n";
+          }
+          
+          if(!empty($error['numberOfOccurrences']))
+          {
+            $json .= "        \"numberOfOccurrences\": \"".$error['numberOfOccurrences']."\",\n";
+          }
+          
+          if(isset($error['expectedDatatype']) && !empty($error['expectedDatatype']))
+          {
+            $json .= "        \"expectedDatatype\": \"".$error['expectedDatatype']."\",\n";
+          }
+          
+          if(isset($error['valueDatatype']) && !empty($error['valueDatatype']))
+          {
+            $json .= "        \"valueDatatype\": \"".$error['valueDatatype']."\",\n";
+          }
+
+          if(isset($error['invalidValue']) && !empty($error['invalidValue']))
+          {
+            $json .= "        \"invalidValue\": \"".$error['invalidValue']."\",\n";
+          }          
+          
+
+          if(!empty($error['datatypeProperty']))
+          {
+            $json .= "        \"datatypeProperty\": \"".$error['datatypeProperty']."\",\n";
+          }          
 
           if(!empty($error['exactExpectedNumberOfOccurrences']))
           {
