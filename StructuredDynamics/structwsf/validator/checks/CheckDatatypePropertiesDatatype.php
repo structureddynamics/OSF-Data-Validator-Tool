@@ -179,286 +179,289 @@
                     // Here we need to take a few exceptions into account. 
                     // Virtuoso does internally change a few defined datatype into xsd:int (or others) when equivalent.
                     // We have to mute such "false positive" errors
-                    if(($range == 'http://www.w3.org/2001/XMLSchema#boolean' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#unsignedByte' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#nonPositiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#positiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#negativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#nonNegativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#unsignedShort' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#decimal'))
+                    if(!(($range == 'http://www.w3.org/2001/XMLSchema#boolean' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedByte' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#nonPositiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#positiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#negativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#nonNegativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedShort' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#decimal')))
                     {
-                      continue;
-                    }
-                    
-                    cecho('  -> Datatype property "'.$datatypeProperty.'" doesn\'t match datatype range "'.$range.'" for value \''.$value['value'].'\' with defined type \''.$value['type'].'\' '."\n", 'LIGHT_RED');
-                    
-                    // If it doesn't match, then we report an error directly
-                    $this->errors[] = array(
-                      'id' => 'DATATYPE-PROPERTIES-DATATYPE-100',
-                      'type' => 'error',
-                      'datatypeProperty' => $datatypeProperty,
-                      'expectedDatatype' => $range,
-                      'valueDatatype' => $value['type'],
-                      'value' => $value['value'],
-                      'affectedRecord' => $value['affectedRecord']
-                    );                      
-                    
-                    continue;
-                  }
-                  else
-                  {
-                    // If then match, then we make sure that the value is valid according to the
-                    // internal Check datatype validation tests
-
-                    $datatypeValidationError = FALSE;
-                    
-                    switch($value['type'])
-                    {
-                      case "http://www.w3.org/2001/XMLSchema#base64Binary":
-                        if(!$this->validateBase64Binary($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#boolean":
-                        if(!$this->validateBoolean($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#byte":
-                        if(!$this->validateByte($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#dateTimeStamp":
-                        if(!$this->validateDateTimeStampISO8601($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#dateTime":
-                        if(!$this->validateDateTimeISO8601($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#decimal":
-                        if(!$this->validateDecimal($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#double":
-                        if(!$this->validateDouble($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#float":
-                        if(!$this->validateFloat($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#hexBinary":
-                        if(!$this->validateHexBinary($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#int":
-                        if(!$this->validateInt($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#integer":
-                        if(!$this->validateInteger($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#language":
-                        if(!$this->validateLanguage($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#long":
-                        if(!$this->validateLong($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#Name":
-                        if(!$this->validateName($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#NCName":
-                        if(!$this->validateNCName($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#negativeInteger":
-                        if(!$this->validateNegativeInteger($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#NMTOKEN":
-                        if(!$this->validateNMTOKEN($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#nonNegativeInteger":
-                        if(!$this->validateNonNegativeInteger($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#nonPositiveInteger":
-                        if(!$this->validateNonPositiveInteger($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#normalizedString":
-                        if(!$this->validateNormalizedString($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral":
-                        if(!$this->validatePlainLiteral($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#positiveInteger":
-                        if(!$this->validatePositiveInteger($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#short":
-                        if(!$this->validateShort($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#string":
-                        if(!$this->validateString($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#token":
-                        if(!$this->validateToken($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#unsignedByte":
-                        if(!$this->validateUnsignedByte($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#unsignedInt":
-                        if(!$this->validateUnsignedInt($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#unsignedLong":
-                        if(!$this->validateUnsignedLong($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#unsignedShort":
-                        if(!$this->validateUnsignedShort($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral":
-                        if(!$this->validateXMLLiteral($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      case "http://www.w3.org/2001/XMLSchema#anyURI":
-                        if(!$this->validateAnyURI($value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                      
-                      default:
-                        // Custom type, try to validate it according to the 
-                        // description of that custom datatype within the 
-                        // ontology
-                        if(!$this->validateCustomDatatype($value['type'], $value['value']))
-                        {
-                          $datatypeValidationError = TRUE;
-                        }
-                      break;
-                    }
-                    
-                    if($datatypeValidationError)
-                    {
-                      cecho('  -> Datatype property "'.$datatypeProperty.'" does match datatype range "'.$range.'" for value \''.$value['value'].'\' but an invalid value as been specified '."\n", 'LIGHT_RED');
+                      cecho('  -> Datatype property "'.$datatypeProperty.'" doesn\'t match datatype range "'.$range.'" for value \''.$value['value'].'\' with defined type \''.$value['type'].'\' '."\n", 'LIGHT_RED');
                       
                       // If it doesn't match, then we report an error directly
                       $this->errors[] = array(
-                        'id' => 'DATATYPE-PROPERTIES-DATATYPE-101',
+                        'id' => 'DATATYPE-PROPERTIES-DATATYPE-100',
                         'type' => 'error',
                         'datatypeProperty' => $datatypeProperty,
                         'expectedDatatype' => $range,
                         'valueDatatype' => $value['type'],
-                        'invalidValue' => $value['value'],
+                        'value' => $value['value'],
                         'affectedRecord' => $value['affectedRecord']
-                      );                                                  
+                      );                      
+                      
+                      continue;
                     }
+                  }
+
+                  // If then match, then we make sure that the value is valid according to the
+                  // internal Check datatype validation tests
+
+                  $datatypeValidationError = FALSE;
+                  
+                  switch($range)
+                  {
+                    case "http://www.w3.org/2001/XMLSchema#anySimpleType":
+                      if(!$this->validateAnySimpleType($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#base64Binary":
+                      if(!$this->validateBase64Binary($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#boolean":
+                      if(!$this->validateBoolean($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#byte":
+                      if(!$this->validateByte($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#dateTimeStamp":
+                      if(!$this->validateDateTimeStampISO8601($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#dateTime":
+                      if(!$this->validateDateTimeISO8601($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#decimal":
+                      if(!$this->validateDecimal($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#double":
+                      if(!$this->validateDouble($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#float":
+                      if(!$this->validateFloat($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#hexBinary":
+                      if(!$this->validateHexBinary($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#int":
+                      if(!$this->validateInt($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#integer":
+                      if(!$this->validateInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#language":
+                      if(!$this->validateLanguage($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#long":
+                      if(!$this->validateLong($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#Name":
+                      if(!$this->validateName($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#NCName":
+                      if(!$this->validateNCName($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#negativeInteger":
+                      if(!$this->validateNegativeInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#NMTOKEN":
+                      if(!$this->validateNMTOKEN($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#nonNegativeInteger":
+                      if(!$this->validateNonNegativeInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#nonPositiveInteger":
+                      if(!$this->validateNonPositiveInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#normalizedString":
+                      if(!$this->validateNormalizedString($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral":
+                      if(!$this->validatePlainLiteral($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#positiveInteger":
+                      if(!$this->validatePositiveInteger($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#short":
+                      if(!$this->validateShort($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#string":
+                      if(!$this->validateString($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#token":
+                      if(!$this->validateToken($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#unsignedByte":
+                      if(!$this->validateUnsignedByte($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#unsignedInt":
+                      if(!$this->validateUnsignedInt($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#unsignedLong":
+                      if(!$this->validateUnsignedLong($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#unsignedShort":
+                      if(!$this->validateUnsignedShort($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral":
+                      if(!$this->validateXMLLiteral($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    case "http://www.w3.org/2001/XMLSchema#anyURI":
+                      if(!$this->validateAnyURI($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
+                    default:
+                      // Custom type, try to validate it according to the 
+                      // description of that custom datatype within the 
+                      // ontology
+                      if(!$this->validateCustomDatatype($value['type'], $value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                  }
+                  
+                  if($datatypeValidationError)
+                  {
+                    cecho('  -> Datatype property "'.$datatypeProperty.'" does match datatype range "'.$range.'" for value \''.$value['value'].'\' but an invalid value as been specified '."\n", 'LIGHT_RED');
+                    
+                    // If it doesn't match, then we report an error directly
+                    $this->errors[] = array(
+                      'id' => 'DATATYPE-PROPERTIES-DATATYPE-101',
+                      'type' => 'error',
+                      'datatypeProperty' => $datatypeProperty,
+                      'expectedDatatype' => $range,
+                      'valueDatatype' => $value['type'],
+                      'invalidValue' => $value['value'],
+                      'affectedRecord' => $value['affectedRecord']
+                    );                                                  
                   }
                 }
               }
