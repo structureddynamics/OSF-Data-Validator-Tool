@@ -483,6 +483,16 @@
       }
     }
 
+    
+    /**
+    * Validate xsd:anySimpleType
+    */
+    protected function validateAnySimpleType($value)
+    {
+      // Nothing to validate, everything is accepted
+      return(TRUE);
+    }    
+    
     /**
     * Validate xsd:token
     */
@@ -593,6 +603,7 @@
       {
         $results = json_decode($sparql->getResultset(), TRUE);    
         
+        // Compose the array that describes the content type
         if(!empty($results['results']['bindings']))
         {
           foreach($results['results']['bindings'] as $binding)
@@ -601,6 +612,241 @@
           }
         }
         
+        // Check if there is a base datatype defined for this custom datatype. If there is, then
+        // the first thing we do is to validate the value according to this base datatype.
+        if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#base']))
+        {
+          switch($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#base'])
+          {
+            case "http://www.w3.org/2001/XMLSchema#base64Binary":
+              if(!$this->validateBase64Binary($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#boolean":
+              if(!$this->validateBoolean($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#byte":
+              if(!$this->validateByte($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#dateTimeStamp":
+              if(!$this->validateDateTimeStampISO8601($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#dateTime":
+              if(!$this->validateDateTimeISO8601($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#decimal":
+              if(!$this->validateDecimal($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#double":
+              if(!$this->validateDouble($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#float":
+              if(!$this->validateFloat($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#hexBinary":
+              if(!$this->validateHexBinary($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#int":
+              if(!$this->validateInt($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#integer":
+              if(!$this->validateInteger($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#language":
+              if(!$this->validateLanguage($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#long":
+              if(!$this->validateLong($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#Name":
+              if(!$this->validateName($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#NCName":
+              if(!$this->validateNCName($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#negativeInteger":
+              if(!$this->validateNegativeInteger($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#NMTOKEN":
+              if(!$this->validateNMTOKEN($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#nonNegativeInteger":
+              if(!$this->validateNonNegativeInteger($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#nonPositiveInteger":
+              if(!$this->validateNonPositiveInteger($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#normalizedString":
+              if(!$this->validateNormalizedString($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral":
+              if(!$this->validatePlainLiteral($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#positiveInteger":
+              if(!$this->validatePositiveInteger($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#short":
+              if(!$this->validateShort($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#string":
+              if(!$this->validateString($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#token":
+              if(!$this->validateToken($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#unsignedByte":
+              if(!$this->validateUnsignedByte($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#unsignedInt":
+              if(!$this->validateUnsignedInt($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#unsignedLong":
+              if(!$this->validateUnsignedLong($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#unsignedShort":
+              if(!$this->validateUnsignedShort($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral":
+              if(!$this->validateXMLLiteral($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            case "http://www.w3.org/2001/XMLSchema#anyURI":
+              if(!$this->validateAnyURI($value))
+              {
+                return(FALSE);
+              }
+            break;
+            
+            default:
+              if(!$this->validateAnySimpleType($value))
+              {
+                return(FALSE);
+              }
+            break;
+          }     
+          
+          // If we validated the base datatype, we simply continue to validate the custom datatype     
+        }
+        
+        // Check if a pattern is defined. If there is one, then we validate according to it       
         if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#pattern']))
         {
           if(preg_match('/'.str_replace('/', '\\/', $datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#pattern']).'/', $value) == 1)
@@ -612,46 +858,8 @@
             return(FALSE);
           }
         }
-
-        if($this->validateString($value))
-        {
-          if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#minLength']))
-          {
-            if(strlen($value) >= $datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#minLength'])
-            {
-              return(TRUE);
-            }
-            else
-            {
-              return(FALSE);
-            }
-          }
-          
-          if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxLength']))
-          {
-            if(strlen($value) <= $datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxLength'])
-            {
-              return(TRUE);
-            }
-            else
-            {
-              return(FALSE);
-            }
-          }
-          
-          if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#length']))
-          {
-            if(strlen($value) == $datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxLength'])
-            {
-              return(TRUE);
-            }
-            else
-            {
-              return(FALSE);
-            }
-          }
-        }
         
+        // Check if the value is a decimal. If it is then we check if we have min/max defined.
         if($this->validateDecimal($value))
         {
           if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#minInclusive']))
@@ -693,6 +901,46 @@
           if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxExclusive']))
           {
             if($value < $datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxExclusive'])
+            {
+              return(TRUE);
+            }
+            else
+            {
+              return(FALSE);
+            }
+          }            
+        }        
+
+        // Otherwise we consider it a literal, and check for min/max length validation
+        if($this->validateAnySimpleType($value))
+        {
+          if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#minLength']))
+          {
+            if(strlen($value) >= $datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#minLength'])
+            {
+              return(TRUE);
+            }
+            else
+            {
+              return(FALSE);
+            }
+          }
+          
+          if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxLength']))
+          {
+            if(strlen($value) <= $datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxLength'])
+            {
+              return(TRUE);
+            }
+            else
+            {
+              return(FALSE);
+            }
+          }
+          
+          if(isset($datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#length']))
+          {
+            if(strlen($value) == $datatypeDesc['http://www.owl-ontologies.com/2005/08/07/xsp.owl#maxLength'])
             {
               return(TRUE);
             }

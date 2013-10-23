@@ -130,7 +130,14 @@
                 {
                   if(!empty($customDatatypes[$existential['dataRange']]))
                   {
-                    $datatypeFilter = 'filter(str(datatype(?value)) = \''.$existential['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$existential['dataRange']].'\' )';
+                    if($customDatatypes[$existential['dataRange']] === 'http://www.w3.org/2001/XMLSchema#anySimpleType')
+                    {
+                      $datatypeFilter = 'filter(str(datatype(?value)) = \''.$existential['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$existential['dataRange']].'\'  || str(datatype(?value)) = \'http://www.w3.org/2001/XMLSchema#string\')';
+                    }
+                    else
+                    {
+                      $datatypeFilter = 'filter(str(datatype(?value)) = \''.$existential['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$existential['dataRange']].'\' )';
+                    }
                   }
                   else
                   {
@@ -258,6 +265,13 @@
                   
                   switch($value['type'])
                   {
+                    case "http://www.w3.org/2001/XMLSchema#anySimpleType":
+                      if(!$this->validateAnySimpleType($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
                     case "http://www.w3.org/2001/XMLSchema#base64Binary":
                       if(!$this->validateBase64Binary($value['value']))
                       {

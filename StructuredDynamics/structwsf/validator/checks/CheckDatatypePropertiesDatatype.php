@@ -179,23 +179,20 @@
                     // Here we need to take a few exceptions into account. 
                     // Virtuoso does internally change a few defined datatype into xsd:int (or others) when equivalent.
                     // We have to mute such "false positive" errors
-                    if(($range == 'http://www.w3.org/2001/XMLSchema#boolean' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#unsignedByte' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#nonPositiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#positiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#negativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#nonNegativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#unsignedShort' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                       ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#decimal'))
+                    if(!(($range == 'http://www.w3.org/2001/XMLSchema#boolean' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedByte' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#nonPositiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#positiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#negativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#nonNegativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedShort' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#decimal')))
                     {
-                      continue;
-                    }
-                    
-                    cecho('  -> Datatype property "'.$datatypeProperty.'" doesn\'t match datatype range "'.$range.'" for value \''.$value['value'].'\' with defined type \''.$value['type'].'\' '."\n", 'LIGHT_RED');
-                    
-                    // If it doesn't match, then we report an error directly
-                    $this->errors[] = array(
+                      cecho('  -> Datatype property "'.$datatypeProperty.'" doesn\'t match datatype range "'.$range.'" for value \''.$value['value'].'\' with defined type \''.$value['type'].'\' '."\n", 'LIGHT_RED');
+                      
+                      // If it doesn't match, then we report an error directly
+                      $this->errors[] = array(
                       'id' => 'DATATYPE-PROPERTIES-DATATYPE-100',
                       'type' => 'error',
                       'datatypeProperty' => $datatypeProperty,
@@ -205,19 +202,26 @@
                       'affectedRecord' => $value['affectedRecord']
                     );                      
                     
-                    continue;
+                      continue;
+                    }
                   }
-                  else
-                  {
-                    // If then match, then we make sure that the value is valid according to the
-                    // internal Check datatype validation tests
 
-                    $datatypeValidationError = FALSE;
+                  // If then match, then we make sure that the value is valid according to the
+                  // internal Check datatype validation tests
+
+                  $datatypeValidationError = FALSE;
+                  
+                  switch($range)
+                  {
+                    case "http://www.w3.org/2001/XMLSchema#anySimpleType":
+                      if(!$this->validateAnySimpleType($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
                     
-                    switch($value['type'])
-                    {
-                      case "http://www.w3.org/2001/XMLSchema#base64Binary":
-                        if(!$this->validateBase64Binary($value['value']))
+                    case "http://www.w3.org/2001/XMLSchema#base64Binary":
+                      if(!$this->validateBase64Binary($value['value']))
                         {
                           $datatypeValidationError = TRUE;
                         }
@@ -455,10 +459,9 @@
                         'datatypeProperty' => $datatypeProperty,
                         'expectedDatatype' => $range,
                         'valueDatatype' => $value['type'],
-                        'invalidValue' => $value['value'],
-                        'affectedRecord' => $value['affectedRecord']
-                      );                                                  
-                    }
+                      'invalidValue' => $value['value'],
+                      'affectedRecord' => $value['affectedRecord']
+                    );                                                  
                   }
                 }
               }

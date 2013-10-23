@@ -133,7 +133,14 @@
                 {
                   if(!empty($customDatatypes[$maxCardinality['dataRange']]))
                   {
-                    $datatypeFilter = 'filter((str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$maxCardinality['dataRange']].'\') && ?onProperty in (<'.$maxCardinality['onProperty'].'>))';
+                    if($customDatatypes[$maxCardinality['dataRange']] === 'http://www.w3.org/2001/XMLSchema#anySimpleType')
+                    {
+                      $datatypeFilter = 'filter((str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$maxCardinality['dataRange']].'\' || str(datatype(?value)) = \'http://www.w3.org/2001/XMLSchema#string\') && ?onProperty in (<'.$maxCardinality['onProperty'].'>))';
+                    }
+                    else
+                    {
+                      $datatypeFilter = 'filter((str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$maxCardinality['dataRange']].'\') && ?onProperty in (<'.$maxCardinality['onProperty'].'>))';
+                    }
                   }
                   else
                   {
@@ -209,7 +216,14 @@
                 {
                   if(!empty($customDatatypes[$maxCardinality['dataRange']]))
                   {
-                    $datatypeFilter = 'filter(str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$maxCardinality['dataRange']].'\' )';
+                    if($customDatatypes[$maxCardinality['dataRange']] === 'http://www.w3.org/2001/XMLSchema#anySimpleType')
+                    {
+                      $datatypeFilter = 'filter(str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$maxCardinality['dataRange']].'\'  || str(datatype(?value)) = \'http://www.w3.org/2001/XMLSchema#string\')';
+                    }
+                    else
+                    {
+                      $datatypeFilter = 'filter(str(datatype(?value)) = \''.$maxCardinality['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$maxCardinality['dataRange']].'\' )';
+                    }
                   }
                   else
                   {
@@ -282,6 +296,13 @@
                   
                   switch($value['type'])
                   {
+                    case "http://www.w3.org/2001/XMLSchema#anySimpleType":
+                      if(!$this->validateAnySimpleType($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
                     case "http://www.w3.org/2001/XMLSchema#base64Binary":
                       if(!$this->validateBase64Binary($value['value']))
                       {

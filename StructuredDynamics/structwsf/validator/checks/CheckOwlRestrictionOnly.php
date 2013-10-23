@@ -130,7 +130,14 @@
                 {
                   if(!empty($customDatatypes[$universal['dataRange']]))
                   {
-                    $datatypeFilter = 'filter((str(datatype(?value)) != \''.$universal['dataRange'].'\' && str(datatype(?value)) != \''.$customDatatypes[$universal['dataRange']].'\') && ?onProperty in (<'.$universal['onProperty'].'>))';
+                    if($customDatatypes[$universal['dataRange']] === 'http://www.w3.org/2001/XMLSchema#anySimpleType')
+                    {
+                      $datatypeFilter = 'filter((str(datatype(?value)) = \''.$universal['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$universal['dataRange']].'\' || str(datatype(?value)) = \'http://www.w3.org/2001/XMLSchema#string\') && ?onProperty in (<'.$universal['onProperty'].'>))';
+                    }
+                    else
+                    {
+                      $datatypeFilter = 'filter((str(datatype(?value)) != \''.$universal['dataRange'].'\' && str(datatype(?value)) != \''.$customDatatypes[$universal['dataRange']].'\') && ?onProperty in (<'.$universal['onProperty'].'>))';
+                    }
                   }
                   else
                   {
@@ -203,7 +210,14 @@
                 {
                   if(!empty($customDatatypes[$universal['dataRange']]))
                   {
-                    $datatypeFilter = 'filter(str(datatype(?value)) = \''.$universal['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$universal['dataRange']].'\' )';
+                    if($customDatatypes[$universal['dataRange']] === 'http://www.w3.org/2001/XMLSchema#anySimpleType')
+                    {
+                      $datatypeFilter = 'filter(str(datatype(?value)) = \''.$universal['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$universal['dataRange']].'\'  || str(datatype(?value)) = \'http://www.w3.org/2001/XMLSchema#string\')';
+                    }
+                    else
+                    {
+                      $datatypeFilter = 'filter(str(datatype(?value)) = \''.$universal['dataRange'].'\' || str(datatype(?value)) = \''.$customDatatypes[$universal['dataRange']].'\' )';
+                    }
                   }
                   else
                   {
@@ -276,6 +290,13 @@
                   
                   switch($value['type'])
                   {
+                    case "http://www.w3.org/2001/XMLSchema#anySimpleType":
+                      if(!$this->validateAnySimpleType($value['value']))
+                      {
+                        $datatypeValidationError = TRUE;
+                      }
+                    break;
+                    
                     case "http://www.w3.org/2001/XMLSchema#base64Binary":
                       if(!$this->validateBase64Binary($value['value']))
                       {
