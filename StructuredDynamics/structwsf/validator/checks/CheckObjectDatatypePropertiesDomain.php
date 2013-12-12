@@ -1,11 +1,11 @@
 <?php
 
-  namespace StructuredDynamics\structwsf\validator\checks; 
+  namespace StructuredDynamics\osf\validator\checks; 
 
-  use \StructuredDynamics\structwsf\php\api\ws\sparql\SparqlQuery;
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\read\OntologyReadQuery;
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\read\GetSuperClassesFunction;
-  use \StructuredDynamics\structwsf\php\api\ws\crud\read\CrudReadQuery;
+  use \StructuredDynamics\osf\php\api\ws\sparql\SparqlQuery;
+  use \StructuredDynamics\osf\php\api\ws\ontology\read\OntologyReadQuery;
+  use \StructuredDynamics\osf\php\api\ws\ontology\read\GetSuperClassesFunction;
+  use \StructuredDynamics\osf\php\api\ws\crud\read\CrudReadQuery;
   
   class CheckObjectDatatypePropertiesDomain extends Check
   {
@@ -204,7 +204,7 @@
                       }
                       else
                       {
-                        cecho("We couldn't get the list of super-classes of a target type from the structWSF instance\n", 'YELLOW');
+                        cecho("We couldn't get the list of super-classes of a target type from the OSF Web Services instance\n", 'YELLOW');
                         
                         // Log a warning
                         // Can't get the super classes of the target type
@@ -217,7 +217,7 @@
                     }
                     else
                     {
-                      cecho("We couldn't find the ontology where the $type is defined on the structWSF instance\n", 'YELLOW');
+                      cecho("We couldn't find the ontology where the $type is defined on the OSF Web Services instance\n", 'YELLOW');
                       
                       // Log a warning
                       // Can't find ontology where the type $type is defined
@@ -260,7 +260,7 @@
               }
               else
               {
-                cecho("We couldn't get the list of the domain of the object & datatype properties from the structWSF instance\n", 'YELLOW');
+                cecho("We couldn't get the list of the domain of the object & datatype properties from the OSF Web Services instance\n", 'YELLOW');
                 
                 $this->errors[] = array(
                   'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-54',
@@ -273,7 +273,7 @@
       }
       else
       {
-        cecho("We couldn't get the list of object & datatype properties from the structWSF instance\n", 'YELLOW');
+        cecho("We couldn't get the list of object & datatype properties from the OSF Web Services instance\n", 'YELLOW');
         
         $this->errors[] = array(
           'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-53',
@@ -550,7 +550,7 @@
       }
       else
       {
-        cecho("We couldn't get the list of affected records from the structWSF instance\n", 'YELLOW');
+        cecho("We couldn't get the list of affected records from the OSF Web Services instance\n", 'YELLOW');
         
         $this->errors[] = array(
           'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-55',

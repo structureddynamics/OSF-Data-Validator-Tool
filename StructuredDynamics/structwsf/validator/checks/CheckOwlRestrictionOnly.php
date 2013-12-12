@@ -1,11 +1,11 @@
 <?php
 
-  namespace StructuredDynamics\structwsf\validator\checks; 
+  namespace StructuredDynamics\osf\validator\checks; 
 
-  use \StructuredDynamics\structwsf\php\api\ws\sparql\SparqlQuery;
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\read\OntologyReadQuery;
-  use \StructuredDynamics\structwsf\php\api\ws\ontology\read\GetSubClassesFunction;
-  use \StructuredDynamics\structwsf\php\api\ws\crud\read\CrudReadQuery;
+  use \StructuredDynamics\osf\php\api\ws\sparql\SparqlQuery;
+  use \StructuredDynamics\osf\php\api\ws\ontology\read\OntologyReadQuery;
+  use \StructuredDynamics\osf\php\api\ws\ontology\read\GetSubClassesFunction;
+  use \StructuredDynamics\osf\php\api\ws\crud\read\CrudReadQuery;
   
   /*
   
@@ -187,7 +187,7 @@
               }
               else
               {
-                cecho("We couldn't get the number of properties per record from the structWSF instance\n", 'YELLOW');
+                cecho("We couldn't get the number of properties per record from the OSF Web Services instance\n", 'YELLOW');
                 
                 // Error: can't get the number of properties used per record
                 $this->errors[] = array(
@@ -567,7 +567,7 @@
       }
       else
       {
-        cecho("We couldn't get the list of universal restriction from the structWSF instance\n", 'YELLOW');
+        cecho("We couldn't get the list of universal restriction from the OSF Web Services instance\n", 'YELLOW');
         
         // Error: can't get the list of retrictions
         $this->errors[] = array(
@@ -698,7 +698,7 @@
                 }
                 else
                 {
-                  cecho("We couldn't get sub-classes of class expression from the structWSF instance\n", 'YELLOW');
+                  cecho("We couldn't get sub-classes of class expression from the OSF Web Services instance\n", 'YELLOW');
                                     
                   // Error: can't get the subclasses of a target ontology
                   $this->errors[] = array(
@@ -750,7 +750,7 @@
               }
               else
               {
-                cecho("We couldn't check if the universal restriction was respected from the structWSF instance\n", 'YELLOW');
+                cecho("We couldn't check if the universal restriction was respected from the OSF Web Services instance\n", 'YELLOW');
                 
                 $this->errors[] = array(
                   'id' => 'OWL-RESTRICTION-ONLY-53',
@@ -768,7 +768,7 @@
       }
       else
       {
-        cecho("We couldn't get the number of object properties used per record from the structWSF instance\n", 'YELLOW');
+        cecho("We couldn't get the number of object properties used per record from the OSF Web Services instance\n", 'YELLOW');
         
         // Error: can't get the number of object properties used per record
         $this->errors[] = array(

@@ -45,22 +45,22 @@
     exit;
   }     
   
-  include_once(rtrim($config['structWSF-PHP-API']['folder'], '/')."/StructuredDynamics/SplClassLoader.php");  
+  include_once(rtrim($config['OSF-WS-PHP-API']['folder'], '/')."/StructuredDynamics/SplClassLoader.php");  
   
   // Load the \ws namespace where all the web service code is 
-  $loader_ws = new SplClassLoader('StructuredDynamics\structwsf\php\api\ws', rtrim($config['structWSF-PHP-API']['folder'], '/'));
+  $loader_ws = new SplClassLoader('StructuredDynamics\osf\php\api\ws', rtrim($config['OSF-WS-PHP-API']['folder'], '/'));
   $loader_ws->register();
 
   // Load the \framework namespace where all the supporting (utility) code is
-  $loader_framework = new SplClassLoader('StructuredDynamics\structwsf\php\api\framework', rtrim($config['structWSF-PHP-API']['folder'], '/'));
+  $loader_framework = new SplClassLoader('StructuredDynamics\osf\php\api\framework', rtrim($config['OSF-WS-PHP-API']['folder'], '/'));
   $loader_framework->register();
 
   // Load the \framework namespace where all the supporting (utility) code is
-  $loader_core_framework = new SplClassLoader('StructuredDynamics\structwsf\framework', rtrim($config['structWSF-PHP-API']['folder'], '/'));
+  $loader_core_framework = new SplClassLoader('StructuredDynamics\osf\framework', rtrim($config['OSF-WS-PHP-API']['folder'], '/'));
   $loader_core_framework->register();  
 
   // Load the \framework namespace where all the supporting (utility) code is
-  $loader_core_framework = new SplClassLoader('StructuredDynamics\structwsf\validator\checks', rtrim($config['structWSF-PHP-API']['folder'], '/'));
+  $loader_core_framework = new SplClassLoader('StructuredDynamics\osf\validator\checks', rtrim($config['OSF-WS-PHP-API']['folder'], '/'));
   $loader_core_framework->register();  
   
   global $silent;
@@ -134,7 +134,7 @@
     {
       $check = new $checkTest();
       
-      $check->setNetwork($config['structwsf']['network']);
+      $check->setNetwork($config['osf']['network']);
       $check->setCheckUsingOntologies($config['data']['ontologies']);
       $check->setCheckOnDatasets($config['data']['datasets']);
       $check->setUser($config["credentials"]["user"]);

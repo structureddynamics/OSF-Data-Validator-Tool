@@ -1,8 +1,8 @@
 <?php
 
-  namespace StructuredDynamics\structwsf\validator\checks; 
+  namespace StructuredDynamics\osf\validator\checks; 
   
-  use \StructuredDynamics\structwsf\php\api\ws\sparql\SparqlQuery;
+  use \StructuredDynamics\osf\php\api\ws\sparql\SparqlQuery;
 
   abstract class Check
   {

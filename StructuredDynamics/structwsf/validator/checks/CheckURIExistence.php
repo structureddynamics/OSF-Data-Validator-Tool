@@ -1,12 +1,12 @@
 <?php
 
-  namespace StructuredDynamics\structwsf\validator\checks; 
+  namespace StructuredDynamics\osf\validator\checks; 
 
-  use \StructuredDynamics\structwsf\php\api\ws\sparql\SparqlQuery;
-  use \StructuredDynamics\structwsf\php\api\ws\crud\read\CrudReadQuery;
-  use \StructuredDynamics\structwsf\php\api\ws\crud\update\CrudUpdateQuery;  
+  use \StructuredDynamics\osf\php\api\ws\sparql\SparqlQuery;
+  use \StructuredDynamics\osf\php\api\ws\crud\read\CrudReadQuery;
+  use \StructuredDynamics\osf\php\api\ws\crud\update\CrudUpdateQuery;  
   
-  use \StructuredDynamics\structwsf\framework\Resultset;
+  use \StructuredDynamics\osf\framework\Resultset;
   
   class CheckURIExistence extends Check
   {
@@ -90,7 +90,7 @@
       }    
       else
       {
-        cecho("We couldn't check if referenced URIs exists in the structWSF instance\n", 'YELLOW');        
+        cecho("We couldn't check if referenced URIs exists in the OSF Web Services instance\n", 'YELLOW');        
         
         $this->errors[] = array(
           'id' => 'URI-EXISTENCE-50',
@@ -378,7 +378,7 @@
       }      
       else
       {
-        cecho("We couldn't get the list of affected records from the structWSF instance\n", 'YELLOW');
+        cecho("We couldn't get the list of affected records from the OSF Web Services instance\n", 'YELLOW');
         
         $this->errors[] = array(
           'id' => 'URI-EXISTENCE-51',
@@ -455,7 +455,7 @@
                 }
                 else
                 {
-                  cecho("We couldn't update the description of an affected record from the structWSF instance\n", 'YELLOW');
+                  cecho("We couldn't update the description of an affected record from the OSF Web Services instance\n", 'YELLOW');
                   
                   $this->errors[] = array(
                     'id' => 'URI-EXISTENCE-53',
@@ -470,7 +470,7 @@
       }
       else
       {
-        cecho("We couldn't read the description of an affected record from the structWSF instance\n", 'YELLOW');
+        cecho("We couldn't read the description of an affected record from the OSF Web Services instance\n", 'YELLOW');
         
         $this->errors[] = array(
           'id' => 'URI-EXISTENCE-52',

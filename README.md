@@ -1,4 +1,4 @@
-structWSF-Data-Validator-Tool
+OSF-Data-Validator-Tool
 ===========================================
 
 The Data Validator Tool (DVT) is a command line tool used to perform a series of post indexation data validation tests. What this tool does is to run a series of pre-configured tests, and return validation errors if any are found.
@@ -7,32 +7,32 @@ The Data Validator Tool (DVT) is a command line tool used to perform a series of
 Installing & Configuring the Data Validator Tool
 -----------------------------------------------------
 
-The Data Validator Tool can easily be installed on your server by extracting the files into the structwsf folder on your server:
+The Data Validator Tool can easily be installed on your server by extracting the files into the OSF Web Services folder on your server:
 
 ```
 
-  [root-path]/StructuredDynamics/structwsf/validator/
+  [root-path]/StructuredDynamics/osf/validator/
   
 ```
 
-The DVT is using the [structWSF-PHP-API](https://github.com/structureddynamics/structWSF-PHP-API) library to communicate with any structWSF network instance. If the structWSF-PHP-API is not currently installed on your server, then follow these steps to download and install it on your server instance:
+The DVT is using the [OSF Web Services PHP API](https://github.com/structureddynamics/OSF-Web-Services-PHP-API) library to communicate with any OSF network instance. If the OSF Web Services PHP API is not currently installed on your server, then follow these steps to download and install it on your server instance:
 
 ```bash
 
-  ./osf-installer --install-structwsf-php-api -v 
+  ./osf-installer --install-osf-ws-php-api -v 
 
 ```
 
-Once the DVT and the structWSF-PHP-API are downloaded and properly installed on your server, you then have to configure some key DVT configuration settings:
+Once the DVT and the OSF Web Services PHP API are downloaded and properly installed on your server, you then have to configure some key DVT configuration settings:
 
-*   `structWSF-PHP-API/folder`
+*   `OSF-WS-PHP-API/folder`
 
-    > Folder where the structWSF-PHP-API is located. This has to be the folder where the 
+    > Folder where the OSF Web Services PHP API is located. This has to be the folder where the 
     > the top "StructuredDynamics" folder appears.
     
-*   `structwsf/network`
+*   `osf/network`
 
-    > Base structWSF web services network URL where the queries will be sent
+    > Base OSF Web Services network URL where the queries will be sent
 
 *   `data/datasets`
 
