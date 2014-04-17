@@ -8,8 +8,8 @@
   {
     protected $name;
     protected $description;
-    protected $checkOnDatasets;
-    protected $checkUsingOntologies;
+    protected $checkOnDatasets = array();
+    protected $checkUsingOntologies = array();
     protected $network;
     protected $appID;
     protected $user;

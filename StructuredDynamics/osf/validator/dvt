@@ -107,15 +107,21 @@
   {  
     cecho("All data of the following dataset and ontologies URIs will be validated on this server:\n\n", 'MAGENTA');
     
-    foreach($config['data']['datasets'] as $dataset)  
+    if(isset($config['data']['datasets']))
     {
-      cecho('  -> '.$dataset."\n", 'MAGENTA');
+      foreach($config['data']['datasets'] as $dataset)  
+      {
+        cecho('  -> '.$dataset."\n", 'MAGENTA');
+      }
     }
     
-    foreach($config['data']['ontologies'] as $ontology)  
+    if(isset($config['data']['ontologies']))
     {
-      cecho('  -> '.$ontology."\n", 'MAGENTA');
-    }  
+      foreach($config['data']['ontologies'] as $ontology)  
+      {
+        cecho('  -> '.$ontology."\n", 'MAGENTA');
+      }  
+    }
     
     if(!empty($outputXMLPath))
     {
@@ -135,7 +141,10 @@
       $check = new $checkTest();
       
       $check->setNetwork($config['osf']['network']);
-      $check->setCheckUsingOntologies($config['data']['ontologies']);
+      if(isset($config['data']['ontologies']))
+      {
+        $check->setCheckUsingOntologies($config['data']['ontologies']);
+      }      
       $check->setCheckOnDatasets($config['data']['datasets']);
       $check->setUser($config["credentials"]["user"]);
       $check->setApiKey($config["credentials"]["api-key"]);
