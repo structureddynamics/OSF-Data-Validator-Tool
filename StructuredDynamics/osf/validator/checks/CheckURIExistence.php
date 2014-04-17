@@ -20,7 +20,6 @@
     
     public function run()
     {
-      DebugBreak('1@localhost:7873;s=0,d=1,p=0,c=1');
       cecho("\n\n");
       
       cecho("Data validation test: ".$this->description."...\n\n", 'LIGHT_BLUE');
