@@ -39,13 +39,19 @@
       
       // Get the list of all the object & datatype properties used within the datasets
       $sparql->mime("application/sparql-results+json")
-             ->query('select distinct ?p ?domain
+             ->query('select ?p ?domain
                       '.$from.'
                       where
                       {
-                        graph ?g {
-                          ?s ?p ?o .
-                        } 
+                        {
+                          select distinct ?p
+                          where
+                          {
+                            graph ?g {
+                              ?s ?p ?o .
+                            } 
+                          }
+                        }
                         
                         optional
                         {                                                          
@@ -69,11 +75,14 @@
           {
             $objectDatatypeProperty = $result['p']['value'];
             
-            $objectDatatypeProperties[$objectDatatypeProperty] = '';
+            if(!isset($objectDatatypeProperties[$objectDatatypeProperty]))
+            {
+              $objectDatatypeProperties[$objectDatatypeProperty] = array();
+            }
             
             if(isset($result['domain']))
             {
-              $objectDatatypeProperties[$objectDatatypeProperty] = $result['domain']['value'];
+              $objectDatatypeProperties[$objectDatatypeProperty][] = $result['domain']['value'];
             }
             else
             {
@@ -86,9 +95,9 @@
           {
             cecho("The following object & datatype properties are used to describe records, but their domain is not specified in the ontologies. owl:Thing is assumed as the range, but you may want to define it further and re-run this check:\n", 'YELLOW');
             
-            foreach($objectDatatypeProperties as $objectDatatypeProperty => $domain)
+            foreach($objectDatatypeProperties as $objectDatatypeProperty => $domains)
             {
-              if(empty($domain))
+              if(empty($domains))
               {
                 cecho('  -> property: '.$objectDatatypeProperty."\n", 'YELLOW');
                 
@@ -107,11 +116,11 @@
           //  (a) List all domains used for a given property
           //  (b) For each of these domains, make sure they comply with what is defined in the ontology as
           //      the domain of the property
-          foreach($objectDatatypeProperties as $objectDatatypeProperty => $domain)
+          foreach($objectDatatypeProperties as $objectDatatypeProperty => $domains)
           {
             // If the domain is empty, we consider it owl:Thing.
             // If the domain is owl:Thing, then we simply skip this check since everything is an owl:Thing
-            if(!empty($domain) && $domain != 'http://www.w3.org/2002/07/owl#Thing')
+            if(!empty($domains))
             {
               $types = array();
               
@@ -130,12 +139,14 @@
                               where
                               {
                                 ?s a ?type .
-                                ?s <'.$objectDatatypeProperty.'> ?o.
+                                filter exists {?s <'.$objectDatatypeProperty.'> ?o}
                               }')
                      ->send();
                
+              cecho('  -> Validating the domains of the '.$objectDatatypeProperty." property\n", 'CYAN');
+               
               if($sparql->isSuccessful())
-              {
+              { 
                 // Create the array of types
                 $results = json_decode($sparql->getResultset(), TRUE);    
                 
@@ -156,7 +167,7 @@
                 foreach($types as $type)
                 {
                   // Then, check if the $domain and the $type directly matches
-                  if($type == $domain)
+                  if(array_search($type, $domains) !== FALSE)
                   {
                     continue;
                   }
@@ -227,29 +238,28 @@
                       );                              
                     }
 
-                    
                     $domainMatch = FALSE;
-      
+                    
                     foreach($superClasses as $superClass)
                     {
-                      if($superClass == $domain)
+                      if(array_search($superClass, $domains) !== FALSE)
                       {
                         $domainMatch = TRUE;
                         break;
                       }
-                    }                            
+                    } 
                     
                     if(!$domainMatch)
                     {
                       // Log an error
                       // Couldn't match one of the super classe with the specified range
-                      cecho('  -> Property "'.$objectDatatypeProperty.'" doesn\'t match domain "'.$domain.'" for record type "'.$type.'"'."\n", 'LIGHT_RED');
+                      cecho('  -> Property "'.$objectDatatypeProperty.'" doesn\'t match domain(s) <'.implode(', ', $domains).'> for record type "'.$type.'"'."\n", 'LIGHT_RED');
                       
                       $this->errors[] = array(
                         'id' => 'OBJECT-DATATYPE-PROPERTIES-DOMAIN-100',
                         'type' => 'error',
                         'property' => $objectDatatypeProperty,
-                        'definedDomain' => $domain,
+                        'definedDomain' => implode(', ', $domains),
                         'type' => $type,
                         'typeSuperTypes' => $superClasses,
                         'affectedRecords' => $this->getAffectedRecords($objectDatatypeProperty, $type, $objectDatatypeProperty)
