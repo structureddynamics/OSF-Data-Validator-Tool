@@ -118,6 +118,8 @@
     */
     protected function validateUnsignedInt($value)
     {
+      $value = filter_var($value, FILTER_VALIDATE_INT);
+      
       if(is_int($value) && $value >= 0 && $value <= 4294967295)   
       {
         return(TRUE);
@@ -163,17 +165,14 @@
     */
     protected function validateBoolean($value)
     {
-      switch((string)$value)
+      if(filter_var((string)$value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== NULL)
       {
-        case '0':
-        case '1':
-        case 'true':
-        case 'false':
-          return(TRUE);
-        break;
+        return(TRUE);
       }
-      
-      return(FALSE);
+      else
+      {
+        return(FALSE);
+      }
     }
 
     /**
@@ -216,7 +215,7 @@
     */
     protected function validateDecimal($value)
     {
-      return((bool) preg_match('/^[+-]?(\d*\.\d+([eE]?[+-]?\d+)?|\d+[eE][+-]?\d+)$/', $value));
+      return((bool) preg_match('/^[+-]?(\d*\.?\d+([eE]?[+-]?\d+)?|\d+[eE][+-]?\d+)$/', $value));
     }
     
     /**
