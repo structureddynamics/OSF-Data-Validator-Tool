@@ -43,10 +43,17 @@
                       '.$from.'
                       where
                       {
-                        graph ?g {
-                          ?s ?p ?o .
-                          filter(isIRI(?o))                          
-                        } 
+                        {
+                          select distinct ?p
+                          where
+                          {
+                            graph ?g {
+                              ?s ?p ?o .
+                            } 
+                          }
+                        }
+                        
+                        ?p a  <http://www.w3.org/2002/07/owl#ObjectProperty> .
                         
                         optional
                         {                                                          
