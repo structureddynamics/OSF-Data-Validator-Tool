@@ -138,7 +138,21 @@
     
     foreach($config['tests']['checks'] as $checkTest)  
     {
-      $check = new $checkTest();
+      // Check for parameters
+      if(($pos = strpos($checkTest, '?')) !== FALSE)
+      {
+        $params = substr($checkTest, $pos + 1);
+        $checkTest = substr($checkTest, 0, $pos);
+      }
+      
+      if(isset($params))
+      {
+        $check = new $checkTest($params);
+      }
+      else
+      {
+        $check = new $checkTest();
+      }
       
       $check->setNetwork($config['osf']['network']);
       if(isset($config['data']['ontologies']))

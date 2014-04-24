@@ -7,10 +7,22 @@
   
   class CheckDatatypePropertiesDatatype extends Check
   {
-    function __construct()
+    private $mode = 'strict';
+    
+    function __construct($params = NULL)
     { 
       $this->name = 'Datatype Properties Datatype Check';
       $this->description = 'Make sure that all the datatype properties used to describe the records uses the proper datatype range as defined in the ontologies';
+
+      if(!empty($params))
+      {
+        parse_str($params, $params);
+        
+        if(isset($params['mode']))
+        {
+          $this->mode = $params['mode'];
+        }
+      }
     }
     
     public function run()
@@ -39,10 +51,17 @@
                       '.$from.'
                       where
                       {
-                        graph ?g {
-                          ?s ?p ?o .
-                          filter(!isIRI(?o))                          
-                        } 
+                        {
+                          select distinct ?p
+                          where
+                          {
+                            graph ?g {
+                              ?s ?p ?o .
+                            } 
+                          }
+                        }
+                        
+                        ?p a  <http://www.w3.org/2002/07/owl#DatatypeProperty> .                      
                         
                         optional
                         {                                                          
@@ -161,6 +180,8 @@
                   }
                 }
 
+                cecho('  -> Validating the values of the '.$datatypeProperty." property\n", 'CYAN');
+                
                 // For each value/type(s), we do validate that the range is valid
                 foreach($values as $value)
                 {
@@ -174,35 +195,38 @@
                   // Note: Here we check if xsd:string is defined, if it is, then we ignore.
                   //       This is required since if no datatype is specified in the RDF document
                   //       Virtuoso is considering it to be a xsd:string
-                  if($range != $value['type'] && $value['type'] != 'http://www.w3.org/2001/XMLSchema#string')
+                  if($this->mode == 'strict')
                   {
-                    // Here we need to take a few exceptions into account. 
-                    // Virtuoso does internally change a few defined datatype into xsd:int (or others) when equivalent.
-                    // We have to mute such "false positive" errors
-                    if(!(($range == 'http://www.w3.org/2001/XMLSchema#boolean' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedByte' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                         ($range == 'http://www.w3.org/2001/XMLSchema#nonPositiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                         ($range == 'http://www.w3.org/2001/XMLSchema#positiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                         ($range == 'http://www.w3.org/2001/XMLSchema#negativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                         ($range == 'http://www.w3.org/2001/XMLSchema#nonNegativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedShort' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
-                         ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#decimal')))
+                    if($range != $value['type'] && $value['type'] != 'http://www.w3.org/2001/XMLSchema#string')
                     {
-                      cecho('  -> Datatype property "'.$datatypeProperty.'" doesn\'t match datatype range "'.$range.'" for value \''.$value['value'].'\' with defined type \''.$value['type'].'\' '."\n", 'LIGHT_RED');
+                      // Here we need to take a few exceptions into account. 
+                      // Virtuoso does internally change a few defined datatype into xsd:int (or others) when equivalent.
+                      // We have to mute such "false positive" errors
+                      if(!(($range == 'http://www.w3.org/2001/XMLSchema#boolean' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                           ($range == 'http://www.w3.org/2001/XMLSchema#unsignedByte' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                           ($range == 'http://www.w3.org/2001/XMLSchema#nonPositiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                           ($range == 'http://www.w3.org/2001/XMLSchema#positiveInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                           ($range == 'http://www.w3.org/2001/XMLSchema#negativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                           ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                           ($range == 'http://www.w3.org/2001/XMLSchema#nonNegativeInteger' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                           ($range == 'http://www.w3.org/2001/XMLSchema#unsignedShort' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#integer') ||
+                           ($range == 'http://www.w3.org/2001/XMLSchema#unsignedLong' && $value['type'] == 'http://www.w3.org/2001/XMLSchema#decimal')))
+                      {
+                        cecho('  -> Datatype property "'.$datatypeProperty.'" doesn\'t match datatype range "'.$range.'" for value \''.$value['value'].'\' with defined type \''.$value['type'].'\' '."\n", 'LIGHT_RED');
+                        
+                        // If it doesn't match, then we report an error directly
+                        $this->errors[] = array(
+                        'id' => 'DATATYPE-PROPERTIES-DATATYPE-100',
+                        'type' => 'error',
+                        'datatypeProperty' => $datatypeProperty,
+                        'expectedDatatype' => $range,
+                        'valueDatatype' => $value['type'],
+                        'value' => $value['value'],
+                        'affectedRecord' => $value['affectedRecord']
+                      );                      
                       
-                      // If it doesn't match, then we report an error directly
-                      $this->errors[] = array(
-                      'id' => 'DATATYPE-PROPERTIES-DATATYPE-100',
-                      'type' => 'error',
-                      'datatypeProperty' => $datatypeProperty,
-                      'expectedDatatype' => $range,
-                      'valueDatatype' => $value['type'],
-                      'value' => $value['value'],
-                      'affectedRecord' => $value['affectedRecord']
-                    );                      
-                    
-                      continue;
+                        continue;
+                      }
                     }
                   }
 
@@ -441,7 +465,14 @@
                         // Custom type, try to validate it according to the 
                         // description of that custom datatype within the 
                         // ontology
-                        if(!$this->validateCustomDatatype($value['type'], $value['value']))
+                        $dtype = $value['type'];
+                        
+                        if($this->mode == 'loose')
+                        {
+                          $dtype = $range;
+                        }
+                        
+                        if(!$this->validateCustomDatatype($dtype, $value['value']))
                         {
                           $datatypeValidationError = TRUE;
                         }
